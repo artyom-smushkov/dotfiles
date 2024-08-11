@@ -1,0 +1,15 @@
+indicator-caps-lock
+show-failed-attempts
+ignore-empty-password
+indicator-thickness=15
+indicator-radius=150
+ring-color=62d6e8
+key-hl-color=00f769
+line-color=00000000
+inside-color=00000088
+inside-clear-color=00000088
+separator-color=00000000
+text-color=e9e9f4
+text-clear-color=e9e9f4
+ring-clear-color=62d6e8
+font=Fira Sans
