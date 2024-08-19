@@ -155,8 +155,7 @@
  :config
  (envrc-global-mode))
 (use-package inheritenv)
-(use-package nix-mode
-  :mode "\\.nix\\'")
+(use-package just-mode)
 
 
 (use-package pyvenv
