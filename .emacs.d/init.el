@@ -59,8 +59,7 @@
   :config
   (avy-setup-default)
   :bind
-  ("C-." . avy-goto-word-1)
-  ("C-," . avy-goto-char-timer))
+  ("C-." . avy-goto-char-timer))
 
 (use-package nerd-icons)
 (use-package doom-modeline
