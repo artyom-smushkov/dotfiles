@@ -49,6 +49,7 @@
     },
     {
       "alignment": "right",
+      "filler": "<#CDD6f4,#1E1E2E>\u2500</>",
       "segments": [
         {
           "background": "#689f63",
