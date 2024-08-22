@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Emacs daemon
+Exec=/usr/bin/distrobox-enter -n opensuse -- /usr/bin/emacs-gtk --daemon
+Terminal=false
+Type=Application
+X-GNOME-Autostart-enabled=true
