@@ -3,7 +3,7 @@ piiq:
 	cd ~/Development/piiq-dev-containers
 	is_running=$(podman-compose ps | grep Up)
 	if [ -z "$is_running" ]; then
-	    podman-compose --in-pod False up -d --build
+	    podman-compose up -d --build
 	fi
 	podman exec -it piiq /bin/zsh
 stop-piiq:
