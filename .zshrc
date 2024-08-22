@@ -34,3 +34,7 @@ bindkey "\C-P" up-line-or-beginning-search # C-p
 bindkey "\C-N" down-line-or-beginning-search # C-n
 
 alias ls='ls --color=auto'
+
+if command -v zoxide &> /dev/null; then
+    eval "$(zoxide init zsh --cmd cd)"
+fi
