@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t -*-
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -10,6 +11,7 @@
 
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode 1)
+(global-auto-revert-mode 1)
 (dolist (mode '(org-mode-hook
                 term-mode-hook
                 vterm-mode-hook
@@ -109,10 +111,13 @@
                                        "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
   (global-ligature-mode 't))
 
-(use-package tree-sitter
-  ;; :hook (prog-mode . tree-sitter-hl-mode)
-  :config 
-  (global-tree-sitter-mode))
+
+(use-package treesit-auto
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
 
 (use-package highlight-indent-guides
   :hook (prog-mode . highlight-indent-guides-mode)
@@ -122,16 +127,8 @@
 (use-package autopair)
 (autopair-global-mode)
 
-(use-package python-mode
-  :hook (python-mode . eglot-ensure)
-  :custom
-  ;; NOTE: Set these if Python 3 is called "python3" on your system!
-   (python-shell-interpreter "python3")
-   (dap-python-executable "python3")
-   (dap-python-debugger 'debugpy)
-   :config
-   (straight-use-package 'dap-python))
-(setq lsp-headerline-breadcrumb-enable-diagnostics nil)
+(use-package eglot
+  :hook ((python-ts-mode) . eglot-ensure))
 
 ;; (use-package eglot-booster
 ;;   :straight (:host github :repo "jdtsmith/eglot-booster")
