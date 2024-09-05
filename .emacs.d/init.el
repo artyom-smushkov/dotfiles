@@ -1,4 +1,5 @@
-;;; -*- lexical-binding: t -*-
+;; -*- lexical-binding: t -*-
+
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -6,8 +7,6 @@
 (set-face-attribute 'default nil :family "IosevkaTerm Nerd Font" :height 110)
 (set-face-attribute 'fixed-pitch nil :family "IosevkaTerm Nerd Font" :height 105)
 (set-face-attribute 'variable-pitch nil :family "Fira Sans Light" :height 115 :weight 'regular)
-
-(setq vc-follow-symlinks nil)
 
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode 1)
@@ -22,18 +21,23 @@
 
 (setq-default cursor-type 'bar)
 
-(setq native-comp-deferred-compilation t)
 
 (setq frame-resize-pixelwise t)
-(setq make-backup-files nil)
-(setq eat-term-name "xterm-256color")
 
 (setq scroll-conservatively 50)
 (setq scroll-preserve-screen-position nil)
 (setq scroll-margin 15)
 (setq scroll-step 1)
 
-;;straight.el
+(setq vc-follow-symlinks nil)
+(setq native-comp-deferred-compilation t)
+(setq make-backup-files nil)
+(setq eat-term-name "xterm-256color")
+(use-package emacs
+  :init
+  (setq tab-always-indent 'complete)
+  (setq warning-minimum-level :error))
+
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -57,12 +61,6 @@
   :config
   (setq which-key-idle-delay 1))
 
-(use-package avy
-  :config
-  (avy-setup-default)
-  :bind
-  ("C-." . avy-goto-char-timer))
-
 (use-package nerd-icons)
 (use-package doom-modeline
   :init (doom-modeline-mode 1))
@@ -71,6 +69,25 @@
 (setq doom-modeline-buffer-state-icon t)
 (setq doom-modeline-lsp-icon t)
 (setq doom-modeline-lsp t)
+
+(set-frame-parameter nil 'alpha-background 90)
+(add-to-list 'default-frame-alist '(alpha-background . 90))
+(add-to-list 'default-frame-alist '(undecorated t))
+(setq split-height-threshold 1000)
+
+(use-package catppuccin-theme
+  :config
+  (load-theme 'catppuccin :no-confirm)
+  (setq catppuccin-flavor 'mocha) ;; or 'latte, 'macchiato, or 'mocha
+  (catppuccin-reload))
+
+(setq ring-bell-function 'ignore)
+
+(use-package avy
+  :config
+  (avy-setup-default)
+  :bind
+  ("C-." . avy-goto-char-timer))
 
 (use-package vertico
   :init
@@ -111,7 +128,6 @@
                                        "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
   (global-ligature-mode 't))
 
-
 (use-package treesit-auto
   :custom
   (treesit-auto-install 'prompt)
@@ -124,39 +140,19 @@
   :config
   (setq highlight-indent-guides-method 'character))
 
-(use-package autopair)
-(autopair-global-mode)
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package autopair
+  :config (autopair-global-mode))
 
 (use-package eglot
   :hook ((python-ts-mode) . eglot-ensure))
 
-;; (use-package eglot-booster
-;;   :straight (:host github :repo "jdtsmith/eglot-booster")
-;;   :after eglot
-;;   :custom (eglot-booster-no-remote-boost t)
-;;   :config (eglot-booster-mode))
-
 (use-package vue-mode
   :hook (vue-mode . egot-ensure))
-
-(setq lsp-pylsp-plugins-flake8-ignore (list "e501" "D"))
-
-(use-package gptel
-  :config
-  (setq gptel-api-key "")
-  (setq gptel-default-mode 'org-mode)
-  (setq gptel-model "gpt-4o"))
-
-(use-package envrc
- :config
- (envrc-global-mode))
-(use-package inheritenv)
-(use-package just-mode)
-
-
-(use-package pyvenv
-  :config
-  (pyvenv-mode 1))
+(use-package dockerfile-mode)
+(use-package docker-compose-mode)
 
 (use-package corfu
   :hook (prog-mode . corfu-mode)
@@ -172,10 +168,8 @@
   :after corfu
   :init (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
-(use-package emacs
-  :init
-  (setq tab-always-indent 'complete)
-  (setq warning-minimum-level :error))
+(use-package magit
+  :bind ("C-x g" . magit-status))
 
 ;; Example configuration for Consult
 (use-package consult
@@ -263,39 +257,15 @@
   (setq consult-narrow-key "<") ;; "C-+"
   )
 
-(use-package dockerfile-mode)
-(use-package docker-compose-mode)
 (use-package eat
   :config
   (eat-eshell-mode)
   (setq eshell-visual-commands '(tmux ssh top htop ranger nvim btop)))
 
-(use-package rainbow-delimiters
-  :hook (prog-mode . rainbow-delimiters-mode))
-
-(use-package magit
-  :bind ("C-x g" . magit-status))
-
-(set-frame-parameter nil 'alpha-background 90)
-(add-to-list 'default-frame-alist '(alpha-background . 90))
-
-(add-to-list 'default-frame-alist '(undecorated t))
-(setq split-height-threshold 1000)
-
-;; (use-package doom-themes
-;;   :config
-;;   ;; Global settings (defaults)
-;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-;;   (load-theme 'doom-dracula t)
-;;   (doom-themes-org-config))
-(use-package catppuccin-theme
+(use-package gptel
   :config
-  (load-theme 'catppuccin :no-confirm)
-  (setq catppuccin-flavor 'mocha) ;; or 'latte, 'macchiato, or 'mocha
-  (catppuccin-reload))
-
-(setq ring-bell-function 'ignore)
+  (setq gptel-api-key "")
+  (setq gptel-default-mode 'org-mode)
 
 (defun efs/org-mode-setup ()
   (org-indent-mode)
@@ -311,11 +281,11 @@
                              (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
   ;; Set faces for heading levels
-  (dolist (face '((org-level-1 . 1.2)
-                  (org-level-2 . 1.1)
-                  (org-level-3 . 1.05)
-                  (org-level-4 . 1.0)
-                  (org-level-5 . 1.1)
+  (dolist (face '((org-level-1 . 1.7)
+                  (org-level-2 . 1.5)
+                  (org-level-3 . 1.4)
+                  (org-level-4 . 1.3)
+                  (org-level-5 . 1.2)
                   (org-level-6 . 1.1)
                   (org-level-7 . 1.1)
                   (org-level-8 . 1.1)))
@@ -330,90 +300,117 @@
   (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
   (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
+(defun efs/org-mode-visual-fill ()
+  (setq visual-fill-column-width 150
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
 (use-package org
   :hook (org-mode . efs/org-mode-setup)
   :config
   (setq org-ellipsis " ▾")
-  (setq org-agenda-files '("~/Documents/second-brain/journals"))
-  (efs/org-font-setup))
-
-(use-package org-bullets
-  :after org
-  :hook (org-mode . org-bullets-mode)
-  :custom
-  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
-
-(defun efs/org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
+  (setq org-refile-targets '((nil . (:maxlevel 4))))
+  (setq org-goto-interface 'outline-path-completion)
+  (setq org-outline-path-complete-in-steps nil)
+  (setq org-goto-max-level 4)
+  (setq org-refile-use-outline-path t)
+  (setq org-agenda-files '("~/Documents/Org"))
+  (efs/org-font-setup)
+  :bind
+  (("C-c n c" . org-capture)
+   ("C-c a a" . org-agenda)
+   ("C-c a l" . org-agenda-list)
+  ))
 
 (use-package visual-fill-column
   :hook (org-mode . efs/org-mode-visual-fill))
 
-(defun org-roam-node-insert-immediate (arg &rest args)
-  (interactive "P")
-  (let ((args (push arg args))
-        (org-roam-capture-templates (list (append (car org-roam-capture-templates)
-                                                  '(:immediate-finish t)))))
-    (apply #'org-roam-node-insert args)))
-
-(use-package org-roam
-  :init
-  (setq org-roam-v2-ack t)
-  :custom
-  (org-roam-directory "~/Documents/second-brain")
-  (org-roam-dailies-directory "journals/")
-  (org-roam-capture-templates
-   '(("d" "default" plain
-      "%?" :target
-      (file+head "pages/${slug}.org" "#+title: ${title}\n")
-      :unnarrowed t)))
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n i" . org-roam-node-insert)
-         ("C-c n I" . org-roam-node-insert-immediate)
-         :map org-roam-dailies-map
-         ("Y" . org-roam-dailies-capture-yesterday)
-         ("T" . org-roam-dailies-capture-tomorrow))
-  :bind-keymap
-  ("C-c n d" . org-roam-dailies-map)
+(use-package org-modern
+  :hook
+  (org-mode . org-modern-mode)
+  (org-agenda-finalize . org-modern-agenda)
   :config
-  (require 'org-roam-dailies)
-  (org-roam-db-autosync-mode)
-  (org-roam-setup))
+  (setq org-pretty-entities t)
+  (setq org-modern-fold-stars
+	'(("◉" . "◉")
+	  ("○" . "○")
+	  ("●" . "●")
+	  ("○" . "○")
+	  ("●" . "●")
+	  ("○" . "○")
+	  ("●" . "●")))
+  (setq org-modern-checkbox
+	'((88 . "󰱒")
+	  (45 . "󱋭")
+	  (32 . "󰄱"))))
 
-(use-package org-roam-ui
-  :straight
-    (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
-    :after org-roam
-    :hook (after-init . org-roam-ui-mode)
-    :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
+(defun my-prompt-knowledge-areas ()
+  (let* ((base-dir "~/Documents/Org/")
+         (subdirs (mapcar 'file-name-nondirectory
+                          (seq-filter 'file-directory-p
+                                      (directory-files base-dir t "^[^.]" t))))
+         (selection (completing-read "Choose a knowledge area: " subdirs nil nil)))
+    (let ((full-path (expand-file-name selection base-dir)))
+      (unless (file-directory-p full-path)
+        (make-directory full-path))
+      full-path)))
+
+(defun my-prompt-knowledge-subjects (directory)
+  (let* ((files (seq-filter
+                 (lambda (file)
+                   (and (file-regular-p file)
+                        (string-equal (file-name-extension file) "org")))
+                 (directory-files directory t "^[^.]" t)))
+         (file-names (mapcar (lambda (file)
+                               (file-name-sans-extension (file-name-nondirectory file)))
+                             files))
+         (selection (completing-read "Choose a subject: " file-names nil nil)))
+    (let ((full-path (expand-file-name (concat selection ".org") directory)))
+      (unless (file-exists-p full-path)
+        (write-region "" nil full-path))
+      full-path)))
+
+(defun my-org-goto-or-insert ()
+  (if (save-excursion
+        (goto-char (point-min))
+        (re-search-forward org-heading-regexp nil t))
+      (org-goto)
+    (goto-char (point-min))))
+
+(defun my-current-time ()
+  (format-time-string "%H:%M"))
+
+(setq org-capture-templates
+      '(("j" "Journal entry"
+         entry (file+olp+datetree "~/Documents/Org/Journal.org")
+         "* %(my-current-time) %?"
+         :empty-lines 0)
+	("k" "Knowledge entry")
+	("ka" "Add subheading"
+	 entry (file+function (lambda () (my-prompt-knowledge-subjects (my-prompt-knowledge-areas))) my-org-goto-or-insert)
+	 "* %?"
+         :empty-lines 0)
+	("kn" "New top level heading"
+	entry (file (lambda () (my-prompt-knowledge-subjects (my-prompt-knowledge-areas))))
+	"* %?"
+	:empty-lines 0)))
+
+(org-babel-do-load-languages
+  'org-babel-load-languages
+  '((emacs-lisp . t)
+    (python . t)))
+
+(push '("conf-unix" . conf-unix) org-src-lang-modes)
+
+(defun efs/org-babel-tangle-config ()
+  (when (string-equal (buffer-file-name)
+                      (expand-file-name "~/Documents/Org/Emacs.org"))
+    ;; Dynamic scoping to the rescue
+    (let ((org-confirm-babel-evaluate nil))
+      (org-babel-tangle))))
+
+(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
 
 (provide '.emacs)
-
-
-;;; .emacs ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("ba430032923a577f4b6d9affd8c03553e13599aa7a33460e00f594b8693115bf" default))
- '(delete-selection-mode nil)
- '(flycheck-checker-error-threshold 1000)
- '(org-hide-emphasis-markers t)
- '(package-selected-packages
-   '(helm-rg highlight-indent-guides direnv nix-mode quelpa-use-package quelpa ini-mode yaml-mode org-roam auto-package-update helm-projectile expand-region unicode-fonts eat vterm doom-themes org-modern helm-core company company-org-block company-box rainbow-delimiters counsel ivy-rich which-key all-the-icons ivy doom-modeline org-bullets org-variable-pitch typescript-mode dap-mode ligature vue-mode darcula-theme vue-html-mode uuidgen use-package ssass-mode solidity-mode solarized-theme pyvenv py-autopep8 pep8 neotree mmm-mode markdown-preview-mode magit-popup magit lua-mode lsp-ui lsp-mode lsp-jedi js2-mode jedi ipython highlight-indentation helm flymake-solidity flymake flycheck-rust find-file-in-project edit-indirect company-racer cm-mode cargo autopair ac-racer))
- '(warning-suppress-types '((lsp-mode) (lsp-mode) (comp))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
