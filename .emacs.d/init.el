@@ -1,5 +1,8 @@
 ;; -*- lexical-binding: t -*-
 
+(when (file-exists-p "~/.emacs.d/secrets.el")
+  (load "~/.emacs.d/secrets.el"))
+
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -10,7 +13,6 @@
 
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode 1)
-(global-auto-revert-mode 1)
 (dolist (mode '(org-mode-hook
                 term-mode-hook
                 vterm-mode-hook
@@ -33,6 +35,8 @@
 (setq native-comp-deferred-compilation t)
 (setq make-backup-files nil)
 (setq eat-term-name "xterm-256color")
+(global-auto-revert-mode 1)
+(setq auto-revert-remote-files t)
 (use-package emacs
   :init
   (setq tab-always-indent 'complete)
@@ -264,15 +268,14 @@
 
 (use-package gptel
   :config
-  (setq gptel-api-key "")
+  (setq gptel-api-key OPENAI_KEY)
   (setq gptel-default-mode 'org-mode)
+  (setq gptel-model "gpt-4o"))
 
 (defun efs/org-mode-setup ()
   (org-indent-mode)
   (variable-pitch-mode 1)
   (visual-line-mode 1))
-
-;; Org Mode Configuration ------------------------------------------------------
 
 (defun efs/org-font-setup ()
   ;; Replace list hyphen with dot
@@ -281,11 +284,11 @@
                              (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
   ;; Set faces for heading levels
-  (dolist (face '((org-level-1 . 1.7)
-                  (org-level-2 . 1.5)
-                  (org-level-3 . 1.4)
-                  (org-level-4 . 1.3)
-                  (org-level-5 . 1.2)
+  (dolist (face '((org-level-1 . 1.5)
+                  (org-level-2 . 1.4)
+                  (org-level-3 . 1.3)
+                  (org-level-4 . 1.2)
+                  (org-level-5 . 1.1)
                   (org-level-6 . 1.1)
                   (org-level-7 . 1.1)
                   (org-level-8 . 1.1)))
@@ -315,6 +318,7 @@
   (setq org-goto-max-level 4)
   (setq org-refile-use-outline-path t)
   (setq org-agenda-files '("~/Documents/Org"))
+  (setq org-directory "~/Documents/Org")
   (efs/org-font-setup)
   :bind
   (("C-c n c" . org-capture)
@@ -410,6 +414,10 @@
       (org-babel-tangle))))
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
+
+(use-package org-ql
+  :bind
+  ("C-c q" . org-ql-find-in-org-directory))
 
 (provide '.emacs)
 (setq custom-file "~/.emacs.d/custom.el")
