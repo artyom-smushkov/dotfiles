@@ -20,8 +20,9 @@ compinit
 
 # # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 # [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-eval "$(oh-my-posh init zsh --config ~/.local/share/oh-my-posh-themes/powerlevel10k_rainbow.omp.json)"
-# eval "$(oh-my-posh init zsh --config ~/.local/share/oh-my-posh-themes/quick-term.omp.json)"
+#eval "$(oh-my-posh init zsh --config ~/.local/share/oh-my-posh-themes/powerlevel10k_rainbow.omp.json)"
+#eval "$(oh-my-posh init zsh --config ~/.local/share/oh-my-posh-themes/catppuccin_mocha.omp.json)"
+eval "$(starship init zsh)"
 autoload -U select-word-style
 select-word-style bash
 autoload -U up-line-or-beginning-search
