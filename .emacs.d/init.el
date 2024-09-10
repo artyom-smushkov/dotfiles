@@ -7,13 +7,14 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 
-(set-face-attribute 'default nil :family "IosevkaTerm Nerd Font" :height 110)
-(set-face-attribute 'fixed-pitch nil :family "IosevkaTerm Nerd Font" :height 105)
-(set-face-attribute 'variable-pitch nil :family "Fira Sans Light" :height 115 :weight 'regular)
+(set-face-attribute 'default nil :family "IosevkaTerm Nerd Font" :height 120)
+(set-face-attribute 'fixed-pitch nil :family "IosevkaTerm Nerd Font" :height 120)
+(set-face-attribute 'variable-pitch nil :family "Fira Sans Light" :height 125 :weight 'regular)
 
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode 1)
 (dolist (mode '(org-mode-hook
+                org-agenda-mode-hook
                 term-mode-hook
                 vterm-mode-hook
                 eat-mode-hook
@@ -284,10 +285,10 @@
                              (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
   ;; Set faces for heading levels
-  (dolist (face '((org-level-1 . 1.5)
-                  (org-level-2 . 1.4)
-                  (org-level-3 . 1.3)
-                  (org-level-4 . 1.2)
+  (dolist (face '((org-level-1 . 1.4)
+                  (org-level-2 . 1.3)
+                  (org-level-3 . 1.2)
+                  (org-level-4 . 1.1)
                   (org-level-5 . 1.1)
                   (org-level-6 . 1.1)
                   (org-level-7 . 1.1)
@@ -317,7 +318,9 @@
   (setq org-outline-path-complete-in-steps nil)
   (setq org-goto-max-level 4)
   (setq org-refile-use-outline-path t)
-  (setq org-agenda-files '("~/Documents/Org"))
+  (setq org-agenda-skip-scheduled-if-done t)
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-files (directory-files-recursively "~/Documents/Org" "\\.org$"))
   (setq org-directory "~/Documents/Org")
   (efs/org-font-setup)
   :bind
@@ -327,7 +330,8 @@
   ))
 
 (use-package visual-fill-column
-  :hook (org-mode . efs/org-mode-visual-fill))
+  :hook
+  (org-mode . efs/org-mode-visual-fill))
 
 (use-package org-modern
   :hook
@@ -418,6 +422,10 @@
 (use-package org-ql
   :bind
   ("C-c q" . org-ql-find-in-org-directory))
+
+(use-package git-auto-commit-mode
+:config
+  (setq gac-automatically-push-p t))
 
 (provide '.emacs)
 (setq custom-file "~/.emacs.d/custom.el")
