@@ -5,7 +5,7 @@ piiq:
 	if [ -z "$is_running" ]; then
 	    docker compose up -d --build
 	fi
-	docker exec -it piiq /bin/zsh
+	docker exec -it piiq /bin/fish
 stop-piiq:
 	#!/bin/bash
 	cd ~/Development/piiq-dev-containers
