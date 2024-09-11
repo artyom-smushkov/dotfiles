@@ -216,7 +216,7 @@
          ("M-s g" . consult-grep)
          ("M-s G" . consult-git-grep)
          ("M-s r" . consult-ripgrep)
-         ("M-s l" . consult-line)
+         ("C-s" . consult-line)
          ("M-s L" . consult-line-multi)
          ("M-s k" . consult-keep-lines)
          ("M-s u" . consult-focus-lines)
@@ -265,7 +265,7 @@
 (use-package eat
   :config
   (eat-eshell-mode)
-  (setq eshell-visual-commands '(tmux ssh top htop ranger nvim btop)))
+  (setq eshell-visual-commands '(ssh top htop btop)))
 
 (use-package gptel
   :config
@@ -321,12 +321,17 @@
   (setq org-agenda-skip-scheduled-if-done t)
   (setq org-agenda-skip-deadline-if-done t)
   (setq org-agenda-files (directory-files-recursively "~/Documents/Org" "\\.org$"))
+  (setq org-agenda-align-tags-to-column 90)
+  (setq org-agenda-prefix-format
+    '((agenda . " %i %?-12t% s")
+     (todo . " %i")
+     (tags . " %i")
+     (search . " %i")))
   (setq org-directory "~/Documents/Org")
   (efs/org-font-setup)
   :bind
   (("C-c n c" . org-capture)
-   ("C-c a a" . org-agenda)
-   ("C-c a l" . org-agenda-list)
+   ("C-c a" . org-agenda)
   ))
 
 (use-package visual-fill-column
@@ -423,8 +428,31 @@
   :bind
   ("C-c q" . org-ql-find-in-org-directory))
 
+(use-package org-super-agenda
+  :after org-agenda
+  :config
+  (setq org-agenda-custom-commands
+        '(("c" "Super view"
+           ((agenda "" ((org-agenda-overriding-header "")
+                        (org-super-agenda-groups
+                         '((:name "Today"
+                            :time-grid t
+                            :date today)
+                           (:name "PIIQ"
+                            :tag "piiq")
+                           (:name "Personal"
+                            :tag "personal")
+                           (:name "Family"
+                            :tag "family")
+                           (:name "Overdue"
+                            :deadline past)
+                           (:name "Due soon"
+                           :deadline future)))))))))
+  :config
+  (org-super-agenda-mode))
+
 (use-package git-auto-commit-mode
-:config
+  :init
   (setq gac-automatically-push-p t))
 
 (provide '.emacs)
