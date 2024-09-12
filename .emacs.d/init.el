@@ -32,16 +32,16 @@
 (setq scroll-margin 15)
 (setq scroll-step 1)
 
-(setq vc-follow-symlinks nil)
-(setq native-comp-deferred-compilation t)
-(setq make-backup-files nil)
-(setq eat-term-name "xterm-256color")
-(global-auto-revert-mode 1)
-(setq auto-revert-remote-files t)
 (use-package emacs
   :init
   (setq tab-always-indent 'complete)
-  (setq warning-minimum-level :error))
+  (setq warning-minimum-level :error)
+  (setq vc-follow-symlinks nil)
+  (setq native-comp-deferred-compilation t)
+  (setq make-backup-files nil)
+  (setq eat-term-name "xterm-256color")
+  (global-auto-revert-mode 1)
+  (setq auto-revert-remote-files t))
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -149,7 +149,8 @@
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package autopair
-  :config (autopair-global-mode))
+  :hook
+  (prog-mode . autopair-mode))
 
 (use-package eglot
   :hook ((python-ts-mode) . eglot-ensure))
@@ -329,6 +330,7 @@
      (search . " %i")))
   (setq org-directory "~/Documents/Org")
   (efs/org-font-setup)
+  (require 'org-tempo)
   :bind
   (("C-c n c" . org-capture)
    ("C-c a" . org-agenda)
@@ -427,29 +429,6 @@
 (use-package org-ql
   :bind
   ("C-c q" . org-ql-find-in-org-directory))
-
-(use-package org-super-agenda
-  :after org-agenda
-  :config
-  (setq org-agenda-custom-commands
-        '(("c" "Super view"
-           ((agenda "" ((org-agenda-overriding-header "")
-                        (org-super-agenda-groups
-                         '((:name "Today"
-                            :time-grid t
-                            :date today)
-                           (:name "PIIQ"
-                            :tag "piiq")
-                           (:name "Personal"
-                            :tag "personal")
-                           (:name "Family"
-                            :tag "family")
-                           (:name "Overdue"
-                            :deadline past)
-                           (:name "Due soon"
-                           :deadline future)))))))))
-  :config
-  (org-super-agenda-mode))
 
 (use-package git-auto-commit-mode
   :init
