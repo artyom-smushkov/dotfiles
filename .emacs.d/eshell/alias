@@ -1,0 +1,4 @@
+alias piiq-dev2 cd "/ssh:artyom.smu@148.251.54.145|ssh:root@95.217.59.120:/opt/piiq/piiq-media/"
+alias piiq-dev2-worker cd "/ssh:artyom.smu@148.251.54.145|ssh:root@95.217.59.120|docker:worker-worker-1:/opt/piiq-media/"
+alias pk eshell-up-peek $1
+alias up eshell-up $1

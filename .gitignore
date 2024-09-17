@@ -1,2 +1,6 @@
-.emacs.d
+.emacs.d/*
 !.emacs.d/init.el
+!.emacs.d/custom.el
+!.emacs.d/eshell
+.emacs.d/eshell/*
+!.emacs.d/eshell/alias
