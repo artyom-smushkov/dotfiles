@@ -25,12 +25,10 @@
 
 (setq-default cursor-type 'bar)
 
-
+(setq scroll-conservatively 50)
 (setq frame-resize-pixelwise t)
 
-(setq scroll-conservatively 50)
 (setq scroll-preserve-screen-position nil)
-(setq scroll-margin 15)
 (setq scroll-step 1)
 
 (defvar bootstrap-version)
@@ -48,6 +46,50 @@
 
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
+
+(use-package evil
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll t)
+  (setq evil-want-C-i-jump nil)
+  :config
+  (evil-mode 1)
+  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init))
+
+(use-package evil-org
+  :ensure t
+  :after org
+  :hook (org-mode . (lambda () evil-org-mode))
+  :config
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
+
+(use-package general
+  :config
+  (general-create-definer my-leader-def
+    :prefix "SPC"
+    :keymaps 'override)
+
+  (my-leader-def
+    :states '(normal visual motion)
+    "f" '(:ignore t :which-key "files")
+    "ff" '(find-file :which-key "find file")
+    "fs" '(save-buffer :which-key "save file")
+    "w" 'evil-window-map
+    "p" project-prefix-map
+    "g" '(magit-status :which-key "magit")
+    "b" '(:ignore t :which-key "buffers")
+    "bb" '(switch-to-buffer :which-key "switch buffer")
+    "bk" '(kill-buffer :which-key "kill buffer")))
 
 (use-package emacs
   :init
@@ -141,13 +183,9 @@
   :custom
   (treesit-auto-install 'prompt)
   :config
+  (setq treesit-font-lock-level 4)
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
-
-(use-package highlight-indent-guides
-  :hook (prog-mode . highlight-indent-guides-mode)
-  :config
-  (setq highlight-indent-guides-method 'character))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -174,7 +212,7 @@
   (corfu-cycle t)
   (corfu-auto t)
   (corfu-auto-delay 0.1)
-  (corfu-auto-prefix 1)
+  (corfu-auto-prefix 2)
   (corfu-popupinfo-mode)
   :init
   (global-corfu-mode))
@@ -184,7 +222,9 @@
   :init (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 (use-package magit
-  :bind ("C-x g" . magit-status))
+  :bind ("C-x g" . magit-status)
+  :config
+  (define-key magit-mode-map (kbd "SPC") nil))
 
 ;; Example configuration for Consult
 (use-package consult
@@ -298,7 +338,7 @@
                   (org-level-6 . 1.1)
                   (org-level-7 . 1.1)
                   (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Ubuntu" :weight 'regular :height (cdr face)))
+    (set-face-attribute (car face) nil :font "Fira Sans" :weight 'regular :height (cdr face)))
 
   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
   (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
@@ -315,6 +355,7 @@
   (visual-fill-column-mode 1))
 
 (use-package org
+  :after evil
   :hook (org-mode . efs/org-mode-setup)
   :config
   (setq org-ellipsis " ▾")
@@ -336,9 +377,8 @@
   (efs/org-font-setup)
   (require 'org-tempo)
   :bind
-  (("C-c n c" . org-capture)
-   ("C-c a" . org-agenda)
-  ))
+  (("C-c c" . org-capture)
+   ("C-c a" . org-agenda)))
 
 (use-package visual-fill-column
   :hook
@@ -396,13 +436,10 @@
       (org-goto)
     (goto-char (point-min))))
 
-(defun my-current-time ()
-  (format-time-string "%H:%M"))
-
 (setq org-capture-templates
       '(("j" "Journal entry"
          entry (file+olp+datetree "~/Documents/Org/Journal.org")
-         "* %(my-current-time) %?\n\n\n\n"
+         "* %?"
          :empty-lines 0)
 	("k" "Knowledge entry")
 	("ka" "Add subheading"
