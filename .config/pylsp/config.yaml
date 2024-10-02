@@ -1,0 +1,24 @@
+   pylsp:
+     plugins:
+       pyflakes:
+         enabled: true
+       pycodestyle:
+         enabled: true
+         ignore:
+           - E501
+         maxLineLength: 160
+       pydocstyle:
+         enabled: true
+       mccabe:
+         enabled: true
+         threshold: 10
+       pylint:
+         enabled: false
+       autopep8:
+         enabled: true
+       yapf:
+         enabled: false
+       rope_completion:
+         enabled: true
+       pyls_mypy:
+         enabled: true
