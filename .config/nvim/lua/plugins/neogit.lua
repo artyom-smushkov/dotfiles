@@ -7,7 +7,11 @@ return {
     },
     config = function() 
         local neogit = require("neogit")
-        neogit.setup({})
+        neogit.setup({
+            integrations = {
+                telescope = true
+            }
+        })
         vim.keymap.set("n", "<leader>g", function() neogit.open({ kind = 'vsplit' }) end, {})
     end
 }

@@ -26,7 +26,7 @@ return {
       lspconfig.html.setup({
         capabilities = capabilities
       })
-      lspconfig.basedpyright.setup({
+      lspconfig.pylsp.setup({
         capabilities = capabilities
       })
 

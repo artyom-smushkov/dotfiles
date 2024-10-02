@@ -17,6 +17,9 @@ return {
                     buffers = {
                         sort_lastused = true  -- Sort by last used, making the previous buffer default
                     },
+                    find_files = {
+                        find_command = {'rg', '--files', '--hidden', '--glob', '!.git/*'}
+                    }
                 },
             })
             local builtin = require("telescope.builtin")
