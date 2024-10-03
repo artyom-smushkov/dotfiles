@@ -61,7 +61,7 @@
   (evil-set-initial-state 'dashboard-mode 'normal))
 
 (use-package evil-collection
-  :after evil
+  :after (evil magit)
   :config
   (evil-collection-init))
 
@@ -84,6 +84,15 @@
     "f" '(:ignore t :which-key "files")
     "ff" '(find-file :which-key "find file")
     "fs" '(save-buffer :which-key "save file")
+    "c" '(:ignore t :which-key "consult")
+    "co" '(consult-outline :which-key "outline")
+    "cg" '(consult-git-grep :which-key "grep")
+    "cr" '(consult-ripgrep :which-key "ripgrep")
+    "ci" '(consult-imenu :which-key "imenu")
+    "o" '(:ignore t :which-key "org")
+    "oa" '(org-agenda :which-key "agenda")
+    "oc" '(org-capture :which-key "capture")
+    "oq" '(org-ql-find-in-org-directory "query")
     "w" 'evil-window-map
     "p" project-prefix-map
     "g" '(magit-status :which-key "magit")
@@ -222,6 +231,7 @@
   :init (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 (use-package magit
+  :after evil-collection
   :bind ("C-x g" . magit-status)
   :config
   (define-key magit-mode-map (kbd "SPC") nil))
