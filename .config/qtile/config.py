@@ -24,6 +24,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
 import subprocess
 from libqtile import bar, layout, qtile, hook
 from libqtile.backend.wayland import InputConfig
@@ -31,6 +32,9 @@ from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from qtile_extras import widget
 from qtile_extras.widget.decorations import RectDecoration
+
+
+os.environ['GTK_THEME'] = 'Dracula'
 
 mod = "mod4"
 terminal = "foot /usr/bin/fish"
@@ -83,7 +87,8 @@ keys = [
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawn("rofi -show drun"), desc="Spawn a command using a prompt widget"),
-    Key(["mod1"], "space", lazy.widget["keyboardlayout"].next_keyboard(), desc="Next keyboard layout")
+    Key(["mod1"], "space", lazy.widget["keyboardlayout"].next_keyboard(), desc="Next keyboard layout"),
+    Key([], "Print", lazy.spawn("grim $(slurp) - | wl-copy")),
 ]
 
 # Add key bindings to switch VTs in Wayland.
@@ -141,9 +146,9 @@ layouts = [
     # layout.VerticalTile(),
     # layout.Zoomy(),
     layout.Spiral(
-        border_focus="#cba6f76e",
-        border_normal="#1e1e2e6e",
-        border_width=2,
+        border_focus="#ba8bafe6",
+        border_normal="#282828e6",
+        border_width=3,
         ratio=0.5,
         margin=15,
         new_client_position="bottom"
@@ -154,19 +159,19 @@ widget_defaults = dict(
     font="Ubuntu",
     fontsize=14,
     padding=3,
-    foreground="cdd6f4"
+    foreground="#d8d8d8"
 )
 extension_defaults = widget_defaults.copy()
 
 decor = {
     "decorations": [
         RectDecoration(
-            colour="#1e1e2ee6",
-            line_colour="#cba6f7e6",
+            colour="#282828e6",
+            line_colour="#ba8bafe6",
             line_width=3,
             radius=0,
             filled=True,
-            padding_x=15,
+            padding_x=5,
             # padding_y=10,
         )
     ],
@@ -194,21 +199,21 @@ screens = [
                     **decor
                 ),
                 widget.Pomodoro(
-                    color_inactive='#cdd6f4',
-                    color_active='#cba6f7',
-                    color_break='f2cdcd',
+                    color_inactive='#86c1b9',
+                    color_active='#ba8baf',
+                    color_break='#a1b56c',
                     **decor
                 ),
                 widget.Spacer(),
                 widget.GroupBox(
                     highlight_method='text',
-                    this_current_screen_border="#cba6f7",
-                    active='#cdd6f4',
-                    inactive='#45475a',
+                    this_current_screen_border="#ba8baf",
+                    active='#d8d8d8',
+                    inactive='#585858',
                     decorations=[
                         RectDecoration(
-                            colour="#1e1e2ee6",
-                            line_colour="cba6f7e6",
+                            colour="#282828e6",
+                            line_colour="ba8bafe6",
                             line_width=3,
                             radius=0,
                             filled=True,
@@ -235,7 +240,7 @@ screens = [
             ],
             28,
             background='#ffffff00',
-            margin=[15, 0, 0, 0]
+            margin=[15, 10, 0, 10]
             # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
             # border_color=["ff00ff", "000000", "ff00ff", "000000"]  # Borders are magenta
         ),

@@ -141,11 +141,20 @@
 (add-to-list 'default-frame-alist '(undecorated t))
 (setq split-height-threshold 1000)
 
-(use-package catppuccin-theme
+;; (use-package catppuccin-theme
+;;   :config
+;;   (load-theme 'catppuccin :no-confirm)
+;;   (setq catppuccin-flavor 'mocha) ;; or 'latte, 'macchiato, or 'mocha
+;;   (catppuccin-reload))
+(use-package doom-themes
+  :ensure t
   :config
-  (load-theme 'catppuccin :no-confirm)
-  (setq catppuccin-flavor 'mocha) ;; or 'latte, 'macchiato, or 'mocha
-  (catppuccin-reload))
+  (setq doom-themes-enable-bold t
+        doom-themes-enable-italic t)
+  (load-theme 'doom-dracula t)
+
+  (doom-themes-visual-bell-config)
+  (doom-themes-org-config))
 
 (setq ring-bell-function 'ignore)
 

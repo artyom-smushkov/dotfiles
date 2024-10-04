@@ -27,7 +27,7 @@ $time\
 [ ](fg:color_bg1)\
 $line_break$character"""
 
-palette = 'catppuccin_mocha'
+palette = 'dracula'
 
 [palettes.catppuccin_mocha]
 color_bg3 = "#f5e0dc"
@@ -40,6 +40,19 @@ color_green = "#a6e3a1"
 color_aqua = "#89dceb"
 color_blue = "#89b4fa"
 color_fg0 = "#1e1e2e"
+
+
+[palettes.dracula]
+color_bg1 = "#ff87d7"
+color_bg3 = "#af87ff"
+color_purple = "#ba8baf"
+color_red = "#ab4b42"
+color_orange = "#ffaf5f"
+color_yellow = "#f1fa8c"
+color_green = "#f7ca88"
+color_aqua = "#b8b8b8"
+color_blue = "#7cafc2"
+color_fg0 = "#282828"
 
 [os]
 disabled = false
