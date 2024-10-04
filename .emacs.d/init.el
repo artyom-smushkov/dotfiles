@@ -63,7 +63,12 @@
 (use-package evil-collection
   :after (evil magit)
   :config
-  (evil-collection-init))
+  (evil-collection-init)
+  (evil-define-key 'normal magit-mode-map
+    "j" 'magit-section-forward
+    "k" 'magit-section-backward
+    "C-j" 'evil-next-visual-line
+    "C-k" 'evil-previous-visual-line))
 
 (use-package evil-org
   :ensure t
@@ -95,6 +100,7 @@
     "oq" '(org-ql-find-in-org-directory "query")
     "w" 'evil-window-map
     "p" project-prefix-map
+    "h" help-map
     "g" '(magit-status :which-key "magit")
     "b" '(:ignore t :which-key "buffers")
     "bb" '(switch-to-buffer :which-key "switch buffer")
