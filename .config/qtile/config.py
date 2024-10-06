@@ -150,7 +150,7 @@ layouts = [
         border_normal="#282828e6",
         border_width=3,
         ratio=0.5,
-        margin=15,
+        margin=16,
         new_client_position="bottom"
     ),
 ]
@@ -171,7 +171,7 @@ decor = {
             line_width=3,
             radius=0,
             filled=True,
-            padding_x=5,
+            padding_x=8,
             # padding_y=10,
         )
     ],
@@ -240,7 +240,7 @@ screens = [
             ],
             28,
             background='#ffffff00',
-            margin=[15, 10, 0, 10]
+            margin=[16, 10, 0, 8]
             # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
             # border_color=["ff00ff", "000000", "ff00ff", "000000"]  # Borders are magenta
         ),
