@@ -47,6 +47,11 @@
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
 
+(use-package all-the-icons
+  :if (display-graphic-p))
+(use-package all-the-icons-dired
+  :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+
 (use-package evil
   :init
   (setq evil-want-integration t)
@@ -336,6 +341,133 @@
   ;; Both < and C-+ work reasonably well.
   (setq consult-narrow-key "<") ;; "C-+"
   )
+
+(use-package eat
+  :config
+  (eat-eshell-mode))
+
+(use-package eshell
+  :ensure nil
+  :hook ((eshell-mode . gopar/eshell-specific-outline-regexp)
+         (eshell-mode . gopar/eshell-setup-keybinding)
+         (eshell-mode . (lambda ()
+                       (eat-eshell-mode)
+                          (setq-local corfu-count 7)
+                          (setq-local corfu-auto nil)
+                          (setq-local corfu-preview-current nil)
+                          (setq-local completion-at-point-functions '(pcomplete-completions-at-point cape-file)))))
+  :custom
+  (eshell-highlight-prompt nil)
+  (eshell-history-size 1024)
+  (eshell-hist-ignoredups t)
+  (eshell-input-filter 'gopar/eshell-input-filter)
+  (eshell-cd-on-directory t)
+  (eshell-list-files-after-cd nil)
+  (eshell-pushd-dunique t)
+  (eshell-last-dir-unique t)
+  (eshell-last-dir-ring-size 32)
+  :config
+  (advice-add #'eshell-add-input-to-history
+                :around
+                #'gopar/adviced-eshell-add-input-to-history)
+
+  :init
+  (defun gopar/eshell-setup-keybinding ()
+    ;; Workaround since bind doesn't work w/ eshell??
+    (define-key eshell-mode-map (kbd "C-c >") 'gopar/eshell-redirect-to-buffer)
+    (define-key eshell-hist-mode-map (kbd "M-r") 'consult-history))
+
+  (defun gopar/adviced-eshell-add-input-to-history (orig-fun &rest r)
+      "Cd to relative paths aren't that useful in history. Change to absolute paths."
+      (require 'seq)
+      (let* ((input (nth 0 r))
+             (args (progn
+                     (set-text-properties 0 (length input) nil input)
+                     (split-string input))))
+        (if (and (equal "cd" (nth 0 args))
+                 (not (seq-find (lambda (item)
+                                  ;; Don't rewrite "cd /ssh:" in history.
+                                  (string-prefix-p "/ssh:" item))
+                                args))
+                 (not (seq-find (lambda (item)
+                                  ;; Don't rewrite "cd -" in history.
+                                  (string-equal "-" item))
+                                args)))
+            (apply orig-fun (list (format "cd %s"
+                                          (expand-file-name (concat default-directory
+                                                                    (nth 1 args))))))
+          (apply orig-fun r))))
+
+  (defun gopar/eshell-input-filter (input)
+    "Do not save on the following:
+       - empty lines
+       - commands that start with a space, `ls`/`l`/`lsd`"
+    (and
+     (eshell-input-filter-default input)
+     (eshell-input-filter-initial-space input)
+     (not (string-prefix-p "ls " input))
+     (not (string-prefix-p "lsd " input))
+     (not (string-prefix-p "l " input))))
+
+  (defun eshell/cat-with-syntax-highlighting (filename)
+    "Like cat(1) but with syntax highlighting.
+Stole from aweshell"
+    (let ((existing-buffer (get-file-buffer filename))
+          (buffer (find-file-noselect filename)))
+      (eshell-print
+       (with-current-buffer buffer
+         (if (fboundp 'font-lock-ensure)
+             (font-lock-ensure)
+           (with-no-warnings
+             (font-lock-fontify-buffer)))
+         (let ((contents (buffer-string)))
+           (remove-text-properties 0 (length contents) '(read-only nil) contents)
+           contents)))
+      (unless existing-buffer
+        (kill-buffer buffer))
+      nil))
+  (advice-add 'eshell/cat :override #'eshell/cat-with-syntax-highlighting)
+
+  (defun gopar/eshell-redirect-to-buffer (buffer)
+    "Auto create command for redirecting to buffer."
+    (interactive (list (read-buffer "Redirect to buffer: ")))
+    (insert (format " >>> #<%s>" buffer)))
+
+(defun gopar/eshell-specific-outline-regexp ()
+  (setq-local outline-regexp eshell-prompt-regexp)))
+
+(use-package eshell-syntax-highlighting
+    :ensure t
+    :config
+    (eshell-syntax-highlighting-global-mode +1)
+    ;; (setq eshell-syntax-highlighting-highlight-in-remote-dirs 't)
+    :init
+    (defface eshell-syntax-highlighting-invalid-face
+      '((t :inherit diff-error))
+      "Face used for invalid Eshell commands."
+      :group 'eshell-syntax-highlighting))
+
+(use-package eshell-up)
+
+(defun create-eshell ()
+  "creates a shell with a given name"
+  (interactive);; "Prompt\n shell name:")
+  (let ((shell-name (read-string "shell name: " nil)))
+  (eshell)
+  (rename-buffer (concat "*" shell-name "*"))))
+
+(use-package eshell-prompt-extras
+:config
+(with-eval-after-load "esh-opt"
+(autoload 'epe-theme-lambda "eshell-prompt-extras")
+(setq eshell-highlight-prompt nil
+      eshell-prompt-function 'epe-theme-multiline-with-status)))
+
+(defun piiq-local ()
+  (cd "~/Development/piiq-dev-containers")
+  (if (string= "" (shell-command-to-string "docker compose ps | grep Up"))
+     (shell-command "docker compose up -d"))
+  (cd "/docker:piiq:/home/piiq/piiq-media/"))
 
 (use-package gptel
   :config
