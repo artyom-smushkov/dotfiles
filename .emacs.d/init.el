@@ -49,8 +49,21 @@
 
 (use-package all-the-icons
   :if (display-graphic-p))
+
 (use-package all-the-icons-dired
   :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+
+(use-package dired
+  :straight nil
+  :custom ((dired-listing-switches "-agho --color=auto --group-directories-first")))
+(use-package dired-single)
+(use-package diredfl
+  :hook (dired-mode . diredfl-mode))
+(use-package dired-hide-dotfiles
+  :hook (dired-mode . dired-hide-dotfiles-mode)
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "H" 'dired-hide-dotfiles-mode))
 
 (use-package evil
   :init
@@ -58,6 +71,7 @@
   (setq evil-want-keybinding nil)
   (setq evil-want-C-u-scroll t)
   (setq evil-want-C-i-jump nil)
+  (setq evil-undo-system 'undo-redo)
   :config
   (evil-mode 1)
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
@@ -66,14 +80,12 @@
   (evil-set-initial-state 'dashboard-mode 'normal))
 
 (use-package evil-collection
-  :after (evil magit)
+  :after evil
   :config
   (evil-collection-init)
-  (evil-define-key 'normal magit-mode-map
-    "j" 'magit-section-forward
-    "k" 'magit-section-backward
-    "C-j" 'evil-next-visual-line
-    "C-k" 'evil-previous-visual-line))
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "h" 'dired-single-up-directory
+    "l" 'dired-single-buffer))
 
 (use-package evil-org
   :ensure t
@@ -94,19 +106,27 @@
     "f" '(:ignore t :which-key "files")
     "ff" '(find-file :which-key "find file")
     "fs" '(save-buffer :which-key "save file")
+    "fd" '(dired :which-key "dired")
+    "e" '(:ignore t :which-key "eshell/evaluate")
+    "en" '(ars/create-eshell :which-key "create new eshell")
+    "eh" '(eshell-syntax-highlighting-mode :which-key "toggle syntax highlighting")
+    "ee" '(eval-region :which-key "eval region (emacs lisp)")
     "c" '(:ignore t :which-key "consult")
     "co" '(consult-outline :which-key "outline")
     "cg" '(consult-git-grep :which-key "grep")
     "cr" '(consult-ripgrep :which-key "ripgrep")
     "ci" '(consult-imenu :which-key "imenu")
+    "ch" '(consult-history :which-key "history")
     "o" '(:ignore t :which-key "org")
     "oa" '(org-agenda :which-key "agenda")
     "oc" '(org-capture :which-key "capture")
-    "oq" '(org-ql-find-in-org-directory "query")
+    "oq" '(org-ql-find-in-org-directory :which-key "query")
     "w" 'evil-window-map
     "p" project-prefix-map
     "h" help-map
     "g" '(magit-status :which-key "magit")
+    "l" '(:ignore t :which-key "LLM")
+    "ln" '(gptel :which-key "gptel")
     "b" '(:ignore t :which-key "buffers")
     "bb" '(switch-to-buffer :which-key "switch buffer")
     "bk" '(kill-buffer :which-key "kill buffer")))
@@ -119,13 +139,16 @@
   (setq native-comp-deferred-compilation t)
   (setq make-backup-files nil)
   (setq eat-term-name "xterm-256color")
+  (setq split-height-threshold nil)
+  (setq split-width-threshold 80)
   (setq tramp-allow-unsafe-temporary-files t)
+  (setq help-window-select t)
+  
   (global-auto-revert-mode 1)
   (setq auto-revert-remote-files t))
 (use-package gcmh
   :config (gcmh-mode 1))
 
-(use-package all-the-icons)
 (use-package which-key
   :init (which-key-mode)
   :diminish which-key-mode
@@ -252,9 +275,13 @@
 
 (use-package magit
   :after evil-collection
-  :bind ("C-x g" . magit-status)
   :config
-  (define-key magit-mode-map (kbd "SPC") nil))
+  (evil-collection-define-key 'normal 'magit-mode-map
+    (kbd "SPC") nil
+    "j" 'magit-section-forward
+    "k" 'magit-section-backward
+    "C-j" 'evil-next-visual-line
+    "C-k" 'evil-previous-visual-line))
 
 ;; Example configuration for Consult
 (use-package consult
@@ -348,67 +375,23 @@
 
 (use-package eshell
   :ensure nil
-  :hook ((eshell-mode . gopar/eshell-specific-outline-regexp)
-         (eshell-mode . gopar/eshell-setup-keybinding)
-         (eshell-mode . (lambda ()
-                       (eat-eshell-mode)
+  :hook ((eshell-mode . (lambda ()
                           (setq-local corfu-count 7)
                           (setq-local corfu-auto nil)
                           (setq-local corfu-preview-current nil)
                           (setq-local completion-at-point-functions '(pcomplete-completions-at-point cape-file)))))
   :custom
-  (eshell-highlight-prompt nil)
   (eshell-history-size 1024)
-  (eshell-hist-ignoredups t)
-  (eshell-input-filter 'gopar/eshell-input-filter)
-  (eshell-cd-on-directory t)
-  (eshell-list-files-after-cd nil)
   (eshell-pushd-dunique t)
   (eshell-last-dir-unique t)
-  (eshell-last-dir-ring-size 32)
-  :config
-  (advice-add #'eshell-add-input-to-history
-                :around
-                #'gopar/adviced-eshell-add-input-to-history)
-
+  (eshell-last-dir-ring-size 128)
+  (eshell-scroll-to-bottom-on-input t)
   :init
-  (defun gopar/eshell-setup-keybinding ()
-    ;; Workaround since bind doesn't work w/ eshell??
-    (define-key eshell-mode-map (kbd "C-c >") 'gopar/eshell-redirect-to-buffer)
-    (define-key eshell-hist-mode-map (kbd "M-r") 'consult-history))
 
-  (defun gopar/adviced-eshell-add-input-to-history (orig-fun &rest r)
-      "Cd to relative paths aren't that useful in history. Change to absolute paths."
-      (require 'seq)
-      (let* ((input (nth 0 r))
-             (args (progn
-                     (set-text-properties 0 (length input) nil input)
-                     (split-string input))))
-        (if (and (equal "cd" (nth 0 args))
-                 (not (seq-find (lambda (item)
-                                  ;; Don't rewrite "cd /ssh:" in history.
-                                  (string-prefix-p "/ssh:" item))
-                                args))
-                 (not (seq-find (lambda (item)
-                                  ;; Don't rewrite "cd -" in history.
-                                  (string-equal "-" item))
-                                args)))
-            (apply orig-fun (list (format "cd %s"
-                                          (expand-file-name (concat default-directory
-                                                                    (nth 1 args))))))
-          (apply orig-fun r))))
-
-  (defun gopar/eshell-input-filter (input)
-    "Do not save on the following:
-       - empty lines
-       - commands that start with a space, `ls`/`l`/`lsd`"
-    (and
-     (eshell-input-filter-default input)
-     (eshell-input-filter-initial-space input)
-     (not (string-prefix-p "ls " input))
-     (not (string-prefix-p "lsd " input))
-     (not (string-prefix-p "l " input))))
-
+  (add-to-list 'exec-path "/home/linuxbrew/.linuxbrew/bin")
+  (add-to-list 'exec-path "/home/linuxbrew/.linuxbrew/sbin")
+  (add-to-list 'exec-path "~/.local/bin")
+  (setenv "PATH" (concat (getenv "PATH") ":/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:~/.local/bin"))
   (defun eshell/cat-with-syntax-highlighting (filename)
     "Like cat(1) but with syntax highlighting.
 Stole from aweshell"
@@ -426,21 +409,13 @@ Stole from aweshell"
       (unless existing-buffer
         (kill-buffer buffer))
       nil))
-  (advice-add 'eshell/cat :override #'eshell/cat-with-syntax-highlighting)
-
-  (defun gopar/eshell-redirect-to-buffer (buffer)
-    "Auto create command for redirecting to buffer."
-    (interactive (list (read-buffer "Redirect to buffer: ")))
-    (insert (format " >>> #<%s>" buffer)))
-
-(defun gopar/eshell-specific-outline-regexp ()
-  (setq-local outline-regexp eshell-prompt-regexp)))
+  (advice-add 'eshell/cat :override #'eshell/cat-with-syntax-highlighting))
 
 (use-package eshell-syntax-highlighting
     :ensure t
     :config
     (eshell-syntax-highlighting-global-mode +1)
-    ;; (setq eshell-syntax-highlighting-highlight-in-remote-dirs 't)
+    (setq eshell-syntax-highlighting-highlight-in-remote-dirs t)
     :init
     (defface eshell-syntax-highlighting-invalid-face
       '((t :inherit diff-error))
@@ -449,19 +424,25 @@ Stole from aweshell"
 
 (use-package eshell-up)
 
-(defun create-eshell ()
-  "creates a shell with a given name"
+(defun ars/create-eshell ()
+  "creates a shell with a given name or swithes to it if it already exists"
   (interactive);; "Prompt\n shell name:")
-  (let ((shell-name (read-string "shell name: " nil)))
-  (eshell)
-  (rename-buffer (concat "*" shell-name "*"))))
+  (let* ((shell-name (read-string "shell name: " nil))
+	   (buffer-name (concat "*" shell-name " eshell*")))
+    (if (get-buffer buffer-name)
+	  (switch-to-buffer buffer-name)
+	  (let ((new-frame (make-frame)))
+		(progn
+		(select-frame-set-input-focus new-frame)
+		(eshell)
+		(rename-buffer buffer-name))))))
 
-(use-package eshell-prompt-extras
-:config
-(with-eval-after-load "esh-opt"
-(autoload 'epe-theme-lambda "eshell-prompt-extras")
-(setq eshell-highlight-prompt nil
-      eshell-prompt-function 'epe-theme-multiline-with-status)))
+;; (use-package eshell-prompt-extras
+;; :config
+;; (with-eval-after-load "esh-opt"
+;; (autoload 'epe-theme-lambda "eshell-prompt-extras")
+;; (setq eshell-highlight-prompt nil
+;;       eshell-prompt-function 'epe-theme-multiline-with-status)))
 
 (defun piiq-local ()
   (cd "~/Development/piiq-dev-containers")
@@ -473,7 +454,7 @@ Stole from aweshell"
   :config
   (setq gptel-api-key OPENAI_KEY)
   (setq gptel-default-mode 'org-mode)
-  (setq gptel-model "gpt-4o"))
+  (setq gptel-model "gpt-4"))
 
 (defun efs/org-mode-setup ()
   (org-indent-mode)
