@@ -121,12 +121,15 @@
     "oa" '(org-agenda :which-key "agenda")
     "oc" '(org-capture :which-key "capture")
     "oq" '(org-ql-find-in-org-directory :which-key "query")
+    "u" '(universal-argument :which-key "universal argument")
     "w" 'evil-window-map
     "p" project-prefix-map
     "h" help-map
     "g" '(magit-status :which-key "magit")
     "l" '(:ignore t :which-key "LLM")
     "ln" '(gptel :which-key "gptel")
+    "ls" '(gptel-send :which-key "send prompt")
+    "lm" '(gptel-menu :which-key "menu")
     "b" '(:ignore t :which-key "buffers")
     "bb" '(switch-to-buffer :which-key "switch buffer")
     "bk" '(kill-buffer :which-key "kill buffer")))
@@ -141,7 +144,6 @@
   (setq eat-term-name "xterm-256color")
   (setq split-height-threshold nil)
   (setq split-width-threshold 80)
-  (setq tramp-allow-unsafe-temporary-files t)
   (setq help-window-select t)
   
   (global-auto-revert-mode 1)
@@ -373,88 +375,11 @@
   :config
   (eat-eshell-mode))
 
-(use-package eshell
-  :ensure nil
-  :hook ((eshell-mode . (lambda ()
-                          (setq-local corfu-count 7)
-                          (setq-local corfu-auto nil)
-                          (setq-local corfu-preview-current nil)
-                          (setq-local completion-at-point-functions '(pcomplete-completions-at-point cape-file)))))
-  :custom
-  (eshell-history-size 1024)
-  (eshell-pushd-dunique t)
-  (eshell-last-dir-unique t)
-  (eshell-last-dir-ring-size 128)
-  (eshell-scroll-to-bottom-on-input t)
-  :init
-
-  (add-to-list 'exec-path "/home/linuxbrew/.linuxbrew/bin")
-  (add-to-list 'exec-path "/home/linuxbrew/.linuxbrew/sbin")
-  (add-to-list 'exec-path "~/.local/bin")
-  (setenv "PATH" (concat (getenv "PATH") ":/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:~/.local/bin"))
-  (defun eshell/cat-with-syntax-highlighting (filename)
-    "Like cat(1) but with syntax highlighting.
-Stole from aweshell"
-    (let ((existing-buffer (get-file-buffer filename))
-          (buffer (find-file-noselect filename)))
-      (eshell-print
-       (with-current-buffer buffer
-         (if (fboundp 'font-lock-ensure)
-             (font-lock-ensure)
-           (with-no-warnings
-             (font-lock-fontify-buffer)))
-         (let ((contents (buffer-string)))
-           (remove-text-properties 0 (length contents) '(read-only nil) contents)
-           contents)))
-      (unless existing-buffer
-        (kill-buffer buffer))
-      nil))
-  (advice-add 'eshell/cat :override #'eshell/cat-with-syntax-highlighting))
-
-(use-package eshell-syntax-highlighting
-    :ensure t
-    :config
-    (eshell-syntax-highlighting-global-mode +1)
-    (setq eshell-syntax-highlighting-highlight-in-remote-dirs t)
-    :init
-    (defface eshell-syntax-highlighting-invalid-face
-      '((t :inherit diff-error))
-      "Face used for invalid Eshell commands."
-      :group 'eshell-syntax-highlighting))
-
-(use-package eshell-up)
-
-(defun ars/create-eshell ()
-  "creates a shell with a given name or swithes to it if it already exists"
-  (interactive);; "Prompt\n shell name:")
-  (let* ((shell-name (read-string "shell name: " nil))
-	   (buffer-name (concat "*" shell-name " eshell*")))
-    (if (get-buffer buffer-name)
-	  (switch-to-buffer buffer-name)
-	  (let ((new-frame (make-frame)))
-		(progn
-		(select-frame-set-input-focus new-frame)
-		(eshell)
-		(rename-buffer buffer-name))))))
-
-;; (use-package eshell-prompt-extras
-;; :config
-;; (with-eval-after-load "esh-opt"
-;; (autoload 'epe-theme-lambda "eshell-prompt-extras")
-;; (setq eshell-highlight-prompt nil
-;;       eshell-prompt-function 'epe-theme-multiline-with-status)))
-
-(defun piiq-local ()
-  (cd "~/Development/piiq-dev-containers")
-  (if (string= "" (shell-command-to-string "docker compose ps | grep Up"))
-     (shell-command "docker compose up -d"))
-  (cd "/docker:piiq:/home/piiq/piiq-media/"))
-
 (use-package gptel
   :config
   (setq gptel-api-key OPENAI_KEY)
   (setq gptel-default-mode 'org-mode)
-  (setq gptel-model "gpt-4"))
+  (setq gptel-model "gpt-4o"))
 
 (defun efs/org-mode-setup ()
   (org-indent-mode)
