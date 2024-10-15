@@ -28,7 +28,7 @@ import os
 import subprocess
 from libqtile import bar, layout, qtile, hook
 from libqtile.backend.wayland import InputConfig
-from libqtile.config import Click, Drag, Group, Key, Match, Screen
+from libqtile.config import Click, Drag, Group, Key, Match, Screen, Rule
 from libqtile.lazy import lazy
 from qtile_extras import widget
 from qtile_extras.widget.decorations import RectDecoration
@@ -105,7 +105,19 @@ for vt in range(1, 8):
     )
 
 
-groups = [Group(i) for i in "1234567890"]
+# groups = [Group(i) for i in "1234567890"]
+groups = [
+    Group("1", matches=[Match(wm_class="zenbrowser")]),
+    Group("2", matches=[Match(wm_class="emacs")]),
+    Group("3", matches=[Match(wm_class="foot")]),
+    Group("4", matches=[Match(wm_class="geary")]),
+    Group("5"),
+    Group("6", matches=[Match(wm_class="lollypop")]),
+    Group("7", matches=[Match(wm_class="steam")]),
+    Group("8", matches=[Match(wm_class="Slack"), Match(wm_class="org.telegram.desktop")]),
+    Group("9"),
+    Group("0"),
+]
 
 for i in groups:
     keys.extend(
@@ -260,7 +272,7 @@ mouse = [
 
 dgroups_key_binder = None
 dgroups_app_rules = []  # type: list
-follow_mouse_focus = True
+follow_mouse_focus = False
 bring_front_click = False
 floats_kept_above = True
 cursor_warp = False
@@ -274,6 +286,7 @@ floating_layout = layout.Floating(
         Match(wm_class="ssh-askpass"),  # ssh-askpass
         Match(title="branchdialog"),  # gitk
         Match(title="pinentry"),  # GPG key password entry
+        Match(wm_type="dialog")
     ]
 )
 auto_fullscreen = True
@@ -287,13 +300,14 @@ auto_minimize = True
 # When using the Wayland backend, this can be used to configure input devices.
 wl_input_rules = {
     "type:keyboard": InputConfig(
-        kb_layout="us,ru,ua",
-        kb_options="grp:alt_space_toggle,caps:capslock"
+        # kb_layout="us,ru,ua",
+        # kb_options="grp:alt_space_toggle,caps:capslock",
+        kb_repeat_rate=40
     )
 }
 
 # xcursor theme (string or None) and size (integer) for Wayland backend
-wl_xcursor_theme = None
+wl_xcursor_theme = "Dracula"
 wl_xcursor_size = 24
 
 @hook.subscribe.startup_once
@@ -303,6 +317,13 @@ def autostart():
     qtile.cmd_spawn('swww init')
     qtile.cmd_spawn('swaync')
     qtile.cmd_spawn('wallsetter')
+    qtile.cmd_spawn('emacs')
+    qtile.cmd_spawn('flatpak run org.gnome.Geary')
+    qtile.cmd_spawn('flatpak run com.slack.Slack')
+    qtile.cmd_spawn('flatpak run org.telegram.desktop')
+    qtile.cmd_spawn('flatpak run org.gnome.Lollypop')
+    qtile.cmd_spawn('flatpak run io.github.zen_browser.zen')
+    qtile.cmd_spawn('daily-sync-changes.sh')
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
 # string besides java UI toolkits; you can see several discussions on the
 # mailing lists, GitHub issues, and other WM documentation that suggest setting
