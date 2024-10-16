@@ -168,7 +168,7 @@ layouts = [
 ]
 
 widget_defaults = dict(
-    font="Ubuntu",
+    font="FiraCode Nerd Font",
     fontsize=14,
     padding=3,
     foreground="#d8d8d8"
@@ -179,7 +179,7 @@ decor = {
     "decorations": [
         RectDecoration(
             colour="#282828e6",
-            line_colour="#ba8bafe6",
+            line_colour="#3a3c4ee6",
             line_width=3,
             radius=0,
             filled=True,
@@ -191,25 +191,64 @@ decor = {
 }
 
 
-def system_monitor():
-    command = (
-        ''' echo " $(top -bn1 | grep "Cpu(s)" | awk '{usage=100 - $8; printf "%.2f%%\\n", usage}')'''
-               '''  $(free | awk '/Mem:/ {printf("%.2f GiB\\n", $3 / 1024 / 1024)}')'''
-               ''' 󰋊 $(df / | awk 'NR==2 {printf("%.2f GiB\\n", $4/1024/1024)}')"'''
-    )
-    return subprocess.check_output(command, shell=True).decode('utf8').rstrip('\n')
+def get_wifi_signal_quality():
+    command = "nmcli -f IN-USE,SSID,SIGNAL device wifi list | grep '*' | awk '{print $3}'"
+    value = subprocess.check_output(command, shell=True).decode('utf8').rstrip('\n')
+    if not value:
+        return '󰤮 ----'
+    value = int(value)
+    if value < 10:
+        return f'󰤯 {value:3d}%'
+    elif value < 30:
+        return f'󰤟 {value:3d}%'
+    elif value < 50:
+        return f'󰤢 {value:3d}%'
+    elif value < 80:
+        return f'󰤥 {value:3d}%'
+    else:
+        return f'󰤨 {value:3d}%'
+
+
+def get_output_volume():
+    muted_command = "pactl get-sink-mute @DEFAULT_SINK@"
+    muted_output = subprocess.check_output(muted_command, shell=True).decode('utf8').rstrip('\n')
+    if muted_output == 'Mute: yes':
+        return '󰝟 ----'
+
+    command = "pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\d+%' | head -n 1"
+    value = subprocess.check_output(command, shell=True).decode('utf8').rstrip('\n')
+    value = int(''.join(c for c in value if c.isdigit()))
+    if value < 33:
+        return f' {value:3d}%'
+    elif value < 80:
+        return f' {value:3d}%'
+    else:
+        return f' {value:3d}%'
+
+
+def get_cpu_load():
+    command = '''top -bn1 | grep "Cpu(s)" | awk '{usage=100 - $8; printf "%.2f%%\\n", usage}' '''
+    value = subprocess.check_output(command, shell=True).decode('utf8').split('.')[0]
+    value = int(value)
+    return f' {value:3d}%'
+
+
+def get_ram_usage():
+    command = '''free | awk '/Mem:/ {printf("%.2f GiB\\n", $3 / 1024 / 1024)}' '''
+    value = subprocess.check_output(command, shell=True).decode('utf8').rstrip('\n')
+    return f' {value:>9}'
+
+
+def get_free_space():
+    command = '''df / | awk 'NR==2 {printf("%.2f GiB\\n", $4/1024/1024)}' '''
+    value = subprocess.check_output(command, shell=True).decode('utf8').rstrip('\n')
+    return f'󰋊 {value:>10}'
+
 
 screens = [
     Screen(
         top=bar.Bar(
             [
-                widget.GenPollText(
-                    func=system_monitor,
-                    update_interval=5,
-                    font="Ubuntu Mono",
-                    fontsize=15,
-                    **decor
-                ),
                 widget.Pomodoro(
                     color_inactive='#86c1b9',
                     color_active='#ba8baf',
@@ -217,6 +256,24 @@ screens = [
                     **decor
                 ),
                 widget.Spacer(),
+                widget.GenPollText(
+                    func=get_wifi_signal_quality,
+                    update_interval=5,
+                    foreground='#b45bcf',
+                    **decor
+                ),
+                widget.GenPollText(
+                    func=get_output_volume,
+                    update_interval=None,
+                    foreground='#62d6e8',
+                    **decor
+                ),
+                widget.GenPollText(
+                    func=get_cpu_load,
+                    update_interval=5,
+                    foreground='#f7f7fb',
+                    **decor
+                ),
                 widget.GroupBox(
                     highlight_method='text',
                     this_current_screen_border="#ba8baf",
@@ -225,7 +282,7 @@ screens = [
                     decorations=[
                         RectDecoration(
                             colour="#282828e6",
-                            line_colour="ba8bafe6",
+                            line_colour="#3a3c4ee6",
                             line_width=3,
                             radius=0,
                             filled=True,
@@ -233,17 +290,35 @@ screens = [
                         )
                     ]
                 ),
+                widget.GenPollText(
+                    func=get_ram_usage,
+                    update_interval=5,
+                    foreground='#00f769',
+                    **decor
+                ),
+                widget.GenPollText(
+                    func=get_free_space,
+                    update_interval=5,
+                    foreground='#626483',
+                    **decor
+                ),
                 widget.Spacer(),
                 widget.KeyboardLayout(
                     configured_keyboards=['us', 'ru', 'ua'],
+                    fmt='󰥻 {}',
+                    foreground='#00f769',
                     **decor
                 ),
                 widget.Clock(
                     format="%H:%M",
+                    fmt=' {}',
+                    foreground='#ebff87',
                     **decor
                 ),
                 widget.Clock(
                     format="%a %Y-%m-%d",
+                    fmt=' {}',
+                    foreground='#62d6e8',
                     **decor
                 ),
                 widget.StatusNotifier(
