@@ -26,6 +26,7 @@
 (setq-default cursor-type 'bar)
 
 (setq scroll-conservatively 50)
+(setq scroll-margin 15)
 (setq frame-resize-pixelwise t)
 
 (setq scroll-preserve-screen-position nil)
@@ -110,6 +111,7 @@
     "e" '(:ignore t :which-key "eshell/evaluate")
     "en" '(ars/create-eshell :which-key "create new eshell")
     "eh" '(eshell-syntax-highlighting-mode :which-key "toggle syntax highlighting")
+    "ec" '(ars/fix-remote-dockers :which-key "clear tramp proxies list")
     "ee" '(eval-region :which-key "eval region (emacs lisp)")
     "c" '(:ignore t :which-key "consult")
     "co" '(consult-outline :which-key "outline")
@@ -150,6 +152,17 @@
   (setq auto-revert-remote-files t))
 (use-package gcmh
   :config (gcmh-mode 1))
+
+(use-package tramp
+  :straight nil
+  :config
+  (setq tramp-allow-unsafe-temporary-files t)
+  (setq tramp-show-ad-hoc-proxies t)
+  (setq tramp-save-ad-hoc-proxies nil))
+
+(defun ars/fix-remote-dockers ()
+  (interactive)
+  (setq tramp-default-proxies-alist nil))
 
 (use-package which-key
   :init (which-key-mode)
@@ -214,24 +227,6 @@
          ("M-A" . marginalia-cycle))
   :init
   (marginalia-mode))
-
-(use-package ligature
-  :config
-  ;; Enable the www ligature in every possible major mode
-  (ligature-set-ligatures 't '("www"))
-
-  ;; Enable ligatures in programming modes                                                           
-  (ligature-set-ligatures 'prog-mode '("www" "**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\" "{-" "::"
-                                       ":::" ":=" "!!" "!=" "!==" "-}" "----" "-->" "->" "->>"
-                                       "-<" "-<<" "-~" "#{" "#[" "##" "###" "####" "#(" "#?" "#_"
-                                       "#_(" ".-" ".=" ".." "..<" "..." "?=" "??" ";;" "/*" "/**"
-                                       "/=" "/==" "/>" "//" "///" "&&" "||" "||=" "|=" "|>" "^=" "$>"
-                                       "++" "+++" "+>" "=:=" "==" "===" "==>" "=>" "=>>" "<="
-                                       "=<<" "=/=" ">-" ">=" ">=>" ">>" ">>-" ">>=" ">>>" "<*"
-                                       "<*>" "<|" "<|>" "<$" "<$>" "<!--" "<-" "<--" "<->" "<+"
-                                       "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
-                                       "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
-  (global-ligature-mode 't))
 
 (use-package treesit-auto
   :custom
@@ -374,6 +369,91 @@
 (use-package eat
   :config
   (eat-eshell-mode))
+
+(use-package eshell
+  :ensure nil
+  :hook ((eshell-mode . (lambda ()
+                          (setq-local corfu-count 7)
+                          (setq-local corfu-auto nil)
+                          (setq-local corfu-preview-current nil)
+                          (setq-local completion-at-point-functions '(pcomplete-completions-at-point cape-file)))))
+  :custom
+  (eshell-history-size 1024)
+  (eshell-pushd-dunique t)
+  (eshell-last-dir-unique t)
+  (eshell-last-dir-ring-size 128)
+  (eshell-scroll-to-bottom-on-input t)
+  :config
+  (setq eshell-visual-commands nil)
+  :init
+  (add-to-list 'exec-path "/home/linuxbrew/.linuxbrew/bin")
+  (add-to-list 'exec-path "/home/linuxbrew/.linuxbrew/sbin")
+  (add-to-list 'exec-path "~/.local/bin")
+  (setenv "PATH" (concat (getenv "PATH") ":/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:~/.local/bin"))
+  (defun eshell/cat-with-syntax-highlighting (filename)
+    "Like cat(1) but with syntax highlighting.
+Stole from aweshell"
+    (let ((existing-buffer (get-file-buffer filename))
+          (buffer (find-file-noselect filename)))
+      (eshell-print
+       (with-current-buffer buffer
+         (if (fboundp 'font-lock-ensure)
+             (font-lock-ensure)
+           (with-no-warnings
+             (font-lock-fontify-buffer)))
+         (let ((contents (buffer-string)))
+           (remove-text-properties 0 (length contents) '(read-only nil) contents)
+           contents)))
+      (unless existing-buffer
+        (kill-buffer buffer))
+      nil))
+  (advice-add 'eshell/cat :override #'eshell/cat-with-syntax-highlighting))
+
+(use-package eshell-syntax-highlighting
+  :ensure t
+  :config
+  (eshell-syntax-highlighting-global-mode +1)
+  (setq eshell-syntax-highlighting-highlight-in-remote-dirs t)
+  :init
+  (defface eshell-syntax-highlighting-invalid-face
+    '((t :inherit diff-error))
+    "Face used for invalid Eshell commands."
+    :group 'eshell-syntax-highlighting))
+
+(use-package bash-completion)
+(use-package fish-completion
+  :hook (eshell-mode . fish-completion-mode)
+  :init (setq fish-completion-fallback-on-bash-p t
+              fish-completion-inhibit-missing-fish-command-warning t
+              fish-completion-prefer-bash-completion t))
+
+(use-package eshell-up)
+
+(defun ars/create-eshell ()
+  "creates a shell with a given name or swithes to it if it already exists"
+  (interactive);; "Prompt\n shell name:")
+  (let* ((shell-name (read-string "shell name: " nil))
+	   (buffer-name (concat "*" shell-name " eshell*")))
+    (if (get-buffer buffer-name)
+	  (switch-to-buffer buffer-name)
+	  (let ((new-frame (make-frame)))
+		(progn
+		(select-frame-set-input-focus new-frame)
+		(eshell)
+		(rename-buffer buffer-name))))))
+
+;; (use-package eshell-prompt-extras
+;; :config
+;; (with-eval-after-load "esh-opt"
+;; (autoload 'epe-theme-lambda "eshell-prompt-extras")
+;; (setq eshell-highlight-prompt nil
+;;       eshell-prompt-function 'epe-theme-multiline-with-status)))
+
+(defun piiq-local ()
+  (cd "~/Development/piiq-dev-containers")
+  (if (string= "" (shell-command-to-string "docker compose ps | grep Up"))
+     (shell-command "docker compose up -d"))
+  (cd "/docker:piiq:/home/piiq/piiq-media/"))
 
 (use-package gptel
   :config
