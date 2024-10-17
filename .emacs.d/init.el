@@ -420,13 +420,6 @@ Stole from aweshell"
     "Face used for invalid Eshell commands."
     :group 'eshell-syntax-highlighting))
 
-(use-package bash-completion)
-(use-package fish-completion
-  :hook (eshell-mode . fish-completion-mode)
-  :init (setq fish-completion-fallback-on-bash-p t
-              fish-completion-inhibit-missing-fish-command-warning t
-              fish-completion-prefer-bash-completion t))
-
 (use-package eshell-up)
 
 (defun ars/create-eshell ()
