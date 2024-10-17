@@ -39,6 +39,7 @@ os.environ['GTK_THEME'] = 'Dracula'
 mod = "mod4"
 terminal = "foot /usr/bin/fish"
 
+
 keys = [
     # A list of available commands that can be bound to keys can be found
     # at https://docs.qtile.org/en/latest/manual/config/lazy.html
@@ -108,7 +109,7 @@ for vt in range(1, 8):
 # groups = [Group(i) for i in "1234567890"]
 groups = [
     Group("1", matches=[Match(wm_class="zenbrowser")]),
-    Group("2", matches=[Match(wm_class="emacs")]),
+    Group("2"),
     Group("3", matches=[Match(wm_class="foot")]),
     Group("4", matches=[Match(wm_class="geary")]),
     Group("5"),
@@ -157,14 +158,22 @@ layouts = [
     # layout.TreeTab(),
     # layout.VerticalTile(),
     # layout.Zoomy(),
-    layout.Spiral(
+    # layout.Spiral(
+    #     border_focus="#ba8bafe6",
+    #     border_normal="#282828e6",
+    #     border_width=3,
+    #     ratio=0.5,
+    #     margin=16,
+    #     new_client_position="bottom"
+    # ),
+    layout.MonadThreeCol(
         border_focus="#ba8bafe6",
         border_normal="#282828e6",
         border_width=3,
         ratio=0.5,
         margin=16,
         new_client_position="bottom"
-    ),
+    )
 ]
 
 widget_defaults = dict(
@@ -276,7 +285,7 @@ screens = [
                 ),
                 widget.GroupBox(
                     highlight_method='text',
-                    this_current_screen_border="#ba8baf",
+                    this_current_screen_border="#b45bcf",
                     active='#d8d8d8',
                     inactive='#585858',
                     decorations=[
@@ -299,7 +308,7 @@ screens = [
                 widget.GenPollText(
                     func=get_free_space,
                     update_interval=5,
-                    foreground='#626483',
+                    foreground='#ebff87',
                     **decor
                 ),
                 widget.Spacer(),
@@ -377,12 +386,12 @@ wl_input_rules = {
     "type:keyboard": InputConfig(
         # kb_layout="us,ru,ua",
         # kb_options="grp:alt_space_toggle,caps:capslock",
-        kb_repeat_rate=40
+        kb_repeat_rate=35
     )
 }
 
 # xcursor theme (string or None) and size (integer) for Wayland backend
-wl_xcursor_theme = "Dracula"
+wl_xcursor_theme = "Catppuccin-Mocha-Mauve"
 wl_xcursor_size = 24
 
 @hook.subscribe.startup_once
@@ -392,7 +401,6 @@ def autostart():
     qtile.cmd_spawn('swww init')
     qtile.cmd_spawn('swaync')
     qtile.cmd_spawn('wallsetter')
-    qtile.cmd_spawn('emacs')
     qtile.cmd_spawn('flatpak run org.gnome.Geary')
     qtile.cmd_spawn('flatpak run com.slack.Slack')
     qtile.cmd_spawn('flatpak run org.telegram.desktop')
