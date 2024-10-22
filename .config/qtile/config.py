@@ -89,7 +89,7 @@ keys = [
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawn("rofi -show drun"), desc="Spawn a command using a prompt widget"),
     Key(["mod1"], "space", lazy.widget["keyboardlayout"].next_keyboard(), desc="Next keyboard layout"),
-    Key([], "Print", lazy.spawn("grim $(slurp) - | wl-copy")),
+    Key([], "Print", lazy.spawn('''/bin/sh -c 'grim -g "$(slurp)" - | swappy -f -' '''), desc="Screenshot"),
 ]
 
 # Add key bindings to switch VTs in Wayland.
@@ -158,14 +158,6 @@ layouts = [
     # layout.TreeTab(),
     # layout.VerticalTile(),
     # layout.Zoomy(),
-    # layout.Spiral(
-    #     border_focus="#ba8bafe6",
-    #     border_normal="#282828e6",
-    #     border_width=3,
-    #     ratio=0.5,
-    #     margin=16,
-    #     new_client_position="bottom"
-    # ),
     layout.MonadThreeCol(
         border_focus="#ba8bafe6",
         border_normal="#282828e6",
@@ -173,7 +165,15 @@ layouts = [
         ratio=0.5,
         margin=16,
         new_client_position="bottom"
-    )
+    ),
+    layout.Spiral(
+        border_focus="#ba8bafe6",
+        border_normal="#282828e6",
+        border_width=3,
+        ratio=0.5,
+        margin=16,
+        new_client_position="bottom"
+    ),
 ]
 
 widget_defaults = dict(
@@ -328,6 +328,11 @@ screens = [
                     color_break='#00f769',
                     fmt=' {}',
                     prefix_inactive='--:--',
+                    **decor
+                ),
+                widget.CurrentLayoutIcon(
+                    foreground='#00f769',
+                    scale=0.5,
                     **decor
                 ),
                 widget.Spacer(),
