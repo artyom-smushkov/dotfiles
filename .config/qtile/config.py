@@ -37,7 +37,7 @@ from qtile_extras.widget.decorations import RectDecoration
 os.environ['GTK_THEME'] = 'Dracula'
 
 mod = "mod4"
-terminal = "foot /usr/bin/fish"
+terminal = "emacsclient -c -e '(ars/create-eshell t)'"
 
 
 keys = [
@@ -254,14 +254,80 @@ def get_free_space():
     return f'󰋊 {value:>10}'
 
 
+def get_current_song():
+    command = "playerctl metadata --format '{{ artist }} - {{ title }}'"
+    try:
+        value = subprocess.check_output(command, shell=True).decode('utf8').rstrip('\n')
+    except Exception:
+        value = '----'
+    return f'󰝚 {value}'
+
+
+def get_notifications_status():
+    dnd_command = 'swaync-client -c'
+    dnd_is_active = subprocess.check_output(dnd_command, shell=True).decode('utf8').rstrip('\n')
+    if dnd_is_active == 'true':
+        return ''
+    command = "swaync-client -c"
+    value = subprocess.check_output(command, shell=True).decode('utf8').rstrip('\n')
+    value = int(value)
+    if not value:
+        return ''
+    else:
+        return '󰂞'
+
+
+def open_swaync():
+    subprocess.call('task-waybar')
+
+
+class ActionableGenPollText(widget.GenPollText):
+    def __init__(self, **config):
+        scroll_down_func = config.pop('scroll_down_func', lambda: None)
+        scroll_up_func = config.pop('scroll_up_func', lambda: None)
+        left_click_func = config.pop('left_click_func', lambda: None)
+        right_click_func = config.pop('right_click_func', lambda: None)
+        middle_click_func = config.pop('middle_click_func', lambda: None)
+        super().__init__(**config)
+
+        self.add_callbacks({
+            "Button1": left_click_func,
+            "Button2": middle_click_func,
+            "Button3": right_click_func,
+            "Button4": scroll_up_func,
+            "Button5": scroll_down_func,
+        })
+
+    def scroll(self, x, y, direction):
+        self.scroll_func(x, y, direction)
+
+
+def increase_volume(*args, **kwargs):
+    qtile.widgets_map.get('volume_widget').force_update()
+    subprocess.call('wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+', shell=True)
+
+
+def decrease_volume():
+    qtile.widgets_map.get('volume_widget').force_update()
+    subprocess.call('wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-', shell=True)
+
+
 screens = [
     Screen(
         top=bar.Bar(
             [
+                widget.GenPollText(
+                    func=get_current_song,
+                    update_interval=1,
+                    foreground='#ebff87',
+                    **decor
+                ),
                 widget.Pomodoro(
-                    color_inactive='#86c1b9',
-                    color_active='#ba8baf',
-                    color_break='#a1b56c',
+                    color_inactive='#f7f7fb',
+                    color_active='#ab4642',
+                    color_break='#00f769',
+                    fmt=' {}',
+                    prefix_inactive='--:--',
                     **decor
                 ),
                 widget.Spacer(),
@@ -271,8 +337,11 @@ screens = [
                     foreground='#b45bcf',
                     **decor
                 ),
-                widget.GenPollText(
+                ActionableGenPollText(
+                    name="volume_widget",
                     func=get_output_volume,
+                    scroll_up_func=increase_volume,
+                    scroll_down_func=decrease_volume,
                     update_interval=None,
                     foreground='#62d6e8',
                     **decor
@@ -333,6 +402,12 @@ screens = [
                 widget.StatusNotifier(
                     **decor
                 ),
+                ActionableGenPollText(
+                    func=get_notifications_status,
+                    left_click_func=open_swaync,
+                    foreground='#00f769',
+                    **decor
+                )
             ],
             28,
             background='#ffffff00',
@@ -407,6 +482,7 @@ def autostart():
     qtile.cmd_spawn('flatpak run org.gnome.Lollypop')
     qtile.cmd_spawn('flatpak run io.github.zen_browser.zen')
     qtile.cmd_spawn('daily-sync-changes.sh')
+    qtile.cmd_spawn('emacs-pgtk --daemon')
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
 # string besides java UI toolkits; you can see several discussions on the
 # mailing lists, GitHub issues, and other WM documentation that suggest setting
