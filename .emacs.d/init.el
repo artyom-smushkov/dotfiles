@@ -133,7 +133,7 @@
     "ls" '(gptel-send :which-key "send prompt")
     "lm" '(gptel-menu :which-key "menu")
     "b" '(:ignore t :which-key "buffers")
-    "bb" '(switch-to-buffer :which-key "switch buffer")
+    "bb" '(consult-buffer :which-key "switch buffer")
     "bk" '(kill-buffer :which-key "kill buffer")))
 
 (use-package emacs
@@ -159,6 +159,7 @@
   (setq tramp-allow-unsafe-temporary-files t)
   (setq tramp-show-ad-hoc-proxies t)
   (setq tramp-save-ad-hoc-proxies nil))
+  (add-to-list tramp-remote-path "/home/linuxbrew/.linuxbrew/bin/")
 
 (defun ars/fix-remote-dockers ()
   (interactive)
@@ -422,16 +423,17 @@ Stole from aweshell"
 
 (use-package eshell-up)
 
-(defun ars/create-eshell ()
+(defun ars/create-eshell (&optional use-old-frame)
   "creates a shell with a given name or swithes to it if it already exists"
-  (interactive);; "Prompt\n shell name:")
+  (interactive)
   (let* ((shell-name (read-string "shell name: " nil))
+	   (use-old-frame (or use-old-frame nil))
 	   (buffer-name (concat "*" shell-name " eshell*")))
     (if (get-buffer buffer-name)
 	  (switch-to-buffer buffer-name)
-	  (let ((new-frame (make-frame)))
+	  (let ((frame (if use-old-frame (selected-frame) (make-frame))))
 		(progn
-		(select-frame-set-input-focus new-frame)
+		(select-frame-set-input-focus frame)
 		(eshell)
 		(rename-buffer buffer-name))))))
 
