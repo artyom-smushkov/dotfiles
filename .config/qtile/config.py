@@ -263,24 +263,6 @@ def get_current_song():
     return f'󰝚 {value}'
 
 
-def get_notifications_status():
-    dnd_command = 'swaync-client -c'
-    dnd_is_active = subprocess.check_output(dnd_command, shell=True).decode('utf8').rstrip('\n')
-    if dnd_is_active == 'true':
-        return ''
-    command = "swaync-client -c"
-    value = subprocess.check_output(command, shell=True).decode('utf8').rstrip('\n')
-    value = int(value)
-    if not value:
-        return ''
-    else:
-        return '󰂞'
-
-
-def open_swaync():
-    subprocess.call('task-waybar')
-
-
 class ActionableGenPollText(widget.GenPollText):
     def __init__(self, **config):
         scroll_down_func = config.pop('scroll_down_func', lambda: None)
@@ -407,12 +389,6 @@ screens = [
                 widget.StatusNotifier(
                     **decor
                 ),
-                ActionableGenPollText(
-                    func=get_notifications_status,
-                    left_click_func=open_swaync,
-                    foreground='#00f769',
-                    **decor
-                )
             ],
             28,
             background='#ffffff00',
