@@ -455,7 +455,6 @@ def autostart():
     qtile.cmd_spawn('/usr/libexec/xdg-desktop-portal')
     qtile.cmd_spawn('/usr/libexec/xdg-desktop-portal-wlr')
     qtile.cmd_spawn('swww init')
-    qtile.cmd_spawn('swaync')
     qtile.cmd_spawn('wallsetter')
     qtile.cmd_spawn('flatpak run org.gnome.Geary')
     qtile.cmd_spawn('flatpak run com.slack.Slack')
