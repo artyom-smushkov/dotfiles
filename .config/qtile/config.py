@@ -177,8 +177,8 @@ layouts = [
 ]
 
 widget_defaults = dict(
-    font="FiraCode Nerd Font",
-    fontsize=14,
+    font="IosevkaTerm Nerd Font",
+    fontsize=15,
     padding=3,
     foreground="#d8d8d8"
 )
