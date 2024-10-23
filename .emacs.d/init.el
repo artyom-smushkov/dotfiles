@@ -3,6 +3,22 @@
 (when (file-exists-p "~/.emacs.d/secrets.el")
   (load "~/.emacs.d/secrets.el"))
 
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
+
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -31,22 +47,6 @@
 
 (setq scroll-preserve-screen-position nil)
 (setq scroll-step 1)
-
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 6))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-(straight-use-package 'use-package)
-(setq straight-use-package-by-default t)
 
 (use-package all-the-icons
   :if (display-graphic-p))
@@ -127,6 +127,7 @@
     "w" 'evil-window-map
     "p" project-prefix-map
     "h" help-map
+    "." '(evil-avy-goto-char-2 :which-key "avy goto char 2")
     "g" '(magit-status :which-key "magit")
     "l" '(:ignore t :which-key "LLM")
     "ln" '(gptel :which-key "gptel")
@@ -159,7 +160,7 @@
   (setq tramp-allow-unsafe-temporary-files t)
   (setq tramp-show-ad-hoc-proxies t)
   (setq tramp-save-ad-hoc-proxies nil))
-  (add-to-list tramp-remote-path "/home/linuxbrew/.linuxbrew/bin/")
+  (add-to-list 'tramp-remote-path "/home/linuxbrew/.linuxbrew/bin/")
 
 (defun ars/fix-remote-dockers ()
   (interactive)
