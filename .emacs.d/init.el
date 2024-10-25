@@ -26,7 +26,7 @@
 
 (set-face-attribute 'default nil :family "IosevkaTerm Nerd Font" :height 120)
 (set-face-attribute 'fixed-pitch nil :family "IosevkaTerm Nerd Font" :height 120)
-(set-face-attribute 'variable-pitch nil :family "Ubuntu" :height 125 :weight 'regular)
+(set-face-attribute 'variable-pitch nil :family "Noto Sans" :height 125 :weight 'regular)
 
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode 1)
