@@ -308,13 +308,14 @@ screens = [
                     color_inactive='#f7f7fb',
                     color_active='#ab4642',
                     color_break='#00f769',
-                    fmt=' {}',
+                    fmt='  {}',
                     prefix_inactive='--:--',
                     **decor
                 ),
                 widget.CurrentLayoutIcon(
                     foreground='#00f769',
                     scale=0.5,
+                    use_mask=True,
                     **decor
                 ),
                 widget.Spacer(),
@@ -344,6 +345,8 @@ screens = [
                     this_current_screen_border="#b45bcf",
                     active='#d8d8d8',
                     inactive='#585858',
+                    spacing=1,
+                    margin_x=14,
                     decorations=[
                         RectDecoration(
                             colour="#282828e6",
@@ -351,7 +354,7 @@ screens = [
                             line_width=3,
                             radius=0,
                             filled=True,
-                            padding_x=0,
+                            padding_x=8,
                         )
                     ]
                 ),
@@ -370,19 +373,19 @@ screens = [
                 widget.Spacer(),
                 widget.KeyboardLayout(
                     configured_keyboards=['us', 'ru', 'ua'],
-                    fmt='󰥻 {}',
+                    fmt='󰥻  {}',
                     foreground='#00f769',
                     **decor
                 ),
                 widget.Clock(
                     format="%H:%M",
-                    fmt=' {}',
+                    fmt='  {}',
                     foreground='#ebff87',
                     **decor
                 ),
                 widget.Clock(
                     format="%a %Y-%m-%d",
-                    fmt=' {}',
+                    fmt='  {}',
                     foreground='#62d6e8',
                     **decor
                 ),
@@ -454,6 +457,7 @@ wl_xcursor_size = 24
 def autostart():
     qtile.cmd_spawn('/usr/libexec/xdg-desktop-portal')
     qtile.cmd_spawn('/usr/libexec/xdg-desktop-portal-wlr')
+    qtile.cmd_spawn('dunst')
     qtile.cmd_spawn('swww init')
     qtile.cmd_spawn('wallsetter')
     qtile.cmd_spawn('flatpak run org.gnome.Geary')
