@@ -245,7 +245,7 @@ def get_cpu_load():
 def get_ram_usage():
     command = '''free | awk '/Mem:/ {printf("%.2f GiB\\n", $3 / 1024 / 1024)}' '''
     value = subprocess.check_output(command, shell=True).decode('utf8').rstrip('\n')
-    return f' {value:>9}'
+    return f'  {value:>9}'
 
 
 def get_free_space():
@@ -302,6 +302,7 @@ screens = [
                     func=get_current_song,
                     update_interval=1,
                     foreground='#ebff87',
+                    max_chars=35,
                     **decor
                 ),
                 widget.Pomodoro(
