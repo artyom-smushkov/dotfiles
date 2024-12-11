@@ -9,14 +9,13 @@ window#waybar {
       border-bottom: 1px solid rgba(26,27,38,0);
       /* border-radius: 10px; */
       color: #00f769;
-      opacity: 0.9;
 }
 window#waybar.empty #window {
     background-color: transparent;
     border: none;
 }
 #workspaces {
-      background: #282936;
+      background-color: rgba(40, 41, 54, 0.9);
       margin: 16px 16px 0px 0px;
       padding: 0px 1px;
       /* border-radius: 10px; */
@@ -49,13 +48,11 @@ window#waybar.empty #window {
       color: #282936;
       background: #62d6e8;
       /* border-radius: 6px; */
-      opacity: 0.9;
 }
 tooltip {
-    background: #282936;
+    background-color: rgba(40, 41, 54, 0.9);
     border: 1px solid #62d6e8;
     /* border-radius: 10px; */
-      opacity: 0.9;
 }
 tooltip label {
     color: #f7f7fb;
@@ -63,127 +60,113 @@ tooltip label {
 #window {
     font-family: Fira Sans;
     color: #e9e9f4;
-    background: #282936;
+    background-color: rgba(40, 41, 54, 0.9);
     /* border-radius: 10px 10px 10px 10px; */
     margin: 16px 16px 0px 16px;
     padding: 2px 10px;
     border: 2px solid #3a3c4e;
-      opacity: 0.9;
 }
 #memory {
       color: #00f769;
-      background: #282936;
+      background-color: rgba(40, 41, 54, 0.9);
       /* border-radius: 10px 10px 10px 10px; */
       margin: 16px 16px 0px 0px;
       padding: 2px 10px;
       border: 2px solid #3a3c4e;
-      opacity: 0.9;
 }
 #clock {
       color: #ebff87;
-      background: #282936;
+      background-color: rgba(40, 41, 54, 0.9);
       /* border-radius: 10px 10px 10px 10px; */
       margin: 16px 16px 0px 0px;
       padding: 2px 10px;
       border: 2px solid #3a3c4e;
-      opacity: 0.9;
 }
 #language {
       color: #00f769;
-      background: #282936;
+      background-color: rgba(40, 41, 54, 0.9);
       /* border-radius: 10px 10px 10px 10px; */
       margin: 16px 16px 0px 0px;
       padding: 2px 10px;
       border: 2px solid #3a3c4e;
-      opacity: 0.9;
 }
 #cpu {
       color: #f7f7fb;
-      background: #282936;
+      background-color: rgba(40, 41, 54, 0.9);
       /* border-radius: 10px 10px 10px 10px; */
       margin: 16px 16px 0px 0px;
       padding: 2px 10px;
       border: 2px solid #3a3c4e;
-      opacity: 0.9;
 }
 #disk {
       color: #626483;
-      background: #282936;
+      background-color: rgba(40, 41, 54, 0.9);
       /* border-radius: 10px 10px 10px 10px; */
       margin: 16px 16px 0px 0px;
       padding: 2px 10px;
       border: 2px solid #3a3c4e;
-      opacity: 0.9;
 }
 #battery {
       color: #ea51b2;
-      background: #282936;
+      background-color: rgba(40, 41, 54, 0.9);
       /* border-radius: 10px 10px 10px 10px; */
       margin: 16px 16px 0px 0px;
       padding: 2px 10px;
       border: 2px solid #3a3c4e;
-      opacity: 0.9;
 }
 #network {
       color: #b45bcf;
-      background: #282936;
+      background-color: rgba(40, 41, 54, 0.9);
       /* border-radius: 10px 10px 10px 10px; */
       margin: 16px 16px 0px 0px;
       padding: 2px 10px;
       border: 2px solid #3a3c4e;
-      opacity: 0.9;
 }
 #tray {
       color: #e9e9f4;
-      background: #282936;
+      background-color: rgba(40, 41, 54, 0.9);
       /* border-radius: 10px 0px 0px 10px; */
       margin: 5px 0px 5px 5px;
       padding: 2px 10px;
       border: 2px solid #3a3c4e;
-      opacity: 0.9;
 }
 #pulseaudio {
       color: #62d6e8;
-      background: #282936;
+      background-color: rgba(40, 41, 54, 0.9);
       /* border-radius: 10px 10px 10px 10px; */
       margin: 16px 16px 0px 0px;
       padding: 2px 10px;
       border: 2px solid #3a3c4e;
-      opacity: 0.9;
 }
 #custom-notification {
       color: #a1efe4;
-      background: #282936;
+      background-color: rgba(40, 41, 54, 0.9);
       /* border-radius: 10px 10px 10px 10px; */
       margin: 16px 16px 0px 0px;
       padding: 2px 10px;
       border: 2px solid #3a3c4e;
-      opacity: 0.9;
 }
   #custom-themeselector {
       color: #62d6e8;
-      background: #282936;
+      background-color: rgba(40, 41, 54, 0.9);
       /* border-radius: 10px 10px 10px 10px; */
       margin: 16px 16px 0px 0px;
       padding: 2px 10px;
       border: 2px solid #3a3c4e;
-      opacity: 0.9;
   }
 #custom-startmenu {
       color: #00f769;
-      background: #282936;
+      background-color: rgba(40, 41, 54, 0.9);
       /* border-radius: 10px 10px 10px 10px; */
       margin: 16px 16px 0px 0px;
       padding: 2px 14px 2px 10px;
       border: 2px solid #3a3c4e;
-      opacity: 0.9;
 }
 #idle_inhibitor {
       color: #b45bcf;
-      background: #282936;
+      background-color: rgba(40, 41, 54, 0.9);
       /* border-radius: 10px 10px 10px 10px; */
       margin: 16px 16px 0px 0px;
       padding: 2px 10px;
       border: 2px solid #3a3c4e;
-      opacity: 0.9;
 }

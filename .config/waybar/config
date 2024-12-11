@@ -24,11 +24,11 @@
       "tooltip": false
     },
     "clock": {
-      "format": " {:%H:%M}",
+      "format": "  {:%H:%M}",
       "tooltip": false
     },
     "cpu": {
-      "format": " {usage:2}%",
+      "format": "  {usage:2}%",
       "interval": 5,
       "tooltip": true
     },
@@ -56,7 +56,7 @@
       "tooltip": true
     },
     "hyprland/language": {
-      "format": "󰥻 {}",
+      "format": "󰥻  {}",
       "format-en": "us",
       "format-ru": "ru",
       "format-uk": "ua"
@@ -88,7 +88,7 @@
     },
     "layer": "top",
     "memory": {
-      "format": " {used}GiB",
+      "format": "  {used}GiB",
       "interval": 5,
       "tooltip": true
     },
@@ -121,7 +121,7 @@
         "󰤥",
         "󰤨"
       ],
-      "format-wifi": "{icon} {signalStrength}%",
+      "format-wifi": "{icon}  {signalStrength}%",
       "tooltip": false
     },
     "position": "top",
