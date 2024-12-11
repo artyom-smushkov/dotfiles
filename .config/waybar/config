@@ -51,13 +51,8 @@
       "return-type": "json",
       "tooltip": false
     },
-    "custom/startmenu": {
-      "format": "",
-      "on-click": "sleep 0.1 && rofi -show drun",
-      "tooltip": false
-    },
     "disk": {
-      "format": "  {free}",
+      "format": "󰋊  {free}",
       "tooltip": true
     },
     "hyprland/language": {
@@ -86,14 +81,14 @@
     "idle_inhibitor": {
       "format": "{icon}",
       "format-icons": {
-        "activated": "",
-        "deactivated": ""
+        "activated": " ",
+        "deactivated": " "
       },
       "tooltip": "true"
     },
     "layer": "top",
     "memory": {
-      "format": " {}%",
+      "format": " {used}GiB",
       "interval": 5,
       "tooltip": true
     },
