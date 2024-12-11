@@ -66,6 +66,13 @@
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
 
+(defun ars/kill-buffer-and-window-or-frame ()
+  (interactive)
+  (kill-buffer (current-buffer))
+  (if (eq (count-windows) 1)
+      (delete-frame)
+    (delete-window)))
+
 (use-package evil
   :init
   (setq evil-want-integration t)
@@ -135,6 +142,7 @@
     "lm" '(gptel-menu :which-key "menu")
     "b" '(:ignore t :which-key "buffers")
     "bb" '(consult-buffer :which-key "switch buffer")
+    "be" '(ars/kill-buffer-and-window-or-frame :which-key "kill buffer and window/frame")
     "bk" '(kill-buffer :which-key "kill buffer")))
 
 (use-package emacs
@@ -170,6 +178,7 @@
   :init (which-key-mode)
   :diminish which-key-mode
   :config
+  (setq which-key-max-description-length 50)
   (setq which-key-idle-delay 1))
 
 (use-package nerd-icons)
@@ -445,11 +454,27 @@ Stole from aweshell"
 ;; (setq eshell-highlight-prompt nil
 ;;       eshell-prompt-function 'epe-theme-multiline-with-status)))
 
-(defun piiq-local ()
-  (cd "~/Development/piiq-dev-containers")
+(defun eshell/piiq-local ()
+  (eshell/cd "~/Development/piiq-dev-containers")
   (if (string= "" (shell-command-to-string "docker compose ps | grep Up"))
-     (shell-command "docker compose up -d"))
-  (cd "/docker:piiq:/home/piiq/piiq-media/"))
+     (shell-command "docker compose up -d" nil nil))
+  (eshell/cd "/docker:piiq:/home/piiq/piiq-media/"))
+
+(defun eshell/piiq-restart-containers ()
+  (if (file-exists-p "./app/manage.py")
+      (progn
+      (eshell/cd "./sys/worker/")
+        (shell-command "docker compose restart")
+        (eshell/cd "../webserver/")
+        (shell-command "docker compose restart")
+        (eshell/cd "../mongosync")
+        (shell-command "docker compose restart")
+        (eshell/cd "../celery_worker")
+        (shell-command "docker compose restart")
+        (eshell/cd "../celery_beat_scheduler")
+        (shell-command "docker compose restart")
+      (eshell/cd "../../"))
+    (eshell/echo "Current directory is not a piiq project root")))
 
 (use-package gptel
   :config
