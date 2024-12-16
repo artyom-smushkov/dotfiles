@@ -168,7 +168,6 @@
   (setq tramp-allow-unsafe-temporary-files t)
   (setq tramp-show-ad-hoc-proxies t)
   (setq tramp-save-ad-hoc-proxies nil))
-  (add-to-list 'tramp-remote-path "/home/linuxbrew/.linuxbrew/bin/")
 
 (defun ars/fix-remote-dockers ()
   (interactive)
@@ -397,10 +396,7 @@
   :config
   (setq eshell-visual-commands nil)
   :init
-  (add-to-list 'exec-path "/home/linuxbrew/.linuxbrew/bin")
-  (add-to-list 'exec-path "/home/linuxbrew/.linuxbrew/sbin")
-  (add-to-list 'exec-path "~/.local/bin")
-  (setenv "PATH" (concat (getenv "PATH") ":/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:~/.local/bin"))
+  (add-to-list 'exec-path "/home/templarrr/.local/bin")
   (defun eshell/cat-with-syntax-highlighting (filename)
     "Like cat(1) but with syntax highlighting.
 Stole from aweshell"
@@ -457,7 +453,7 @@ Stole from aweshell"
 (defun eshell/piiq-local ()
   (eshell/cd "~/Development/piiq-dev-containers")
   (if (string= "" (shell-command-to-string "docker compose ps | grep Up"))
-     (shell-command "docker compose up -d" nil nil))
+     (shell-command-to-string "docker compose up -d --build"))
   (eshell/cd "/docker:piiq:/home/piiq/piiq-media/"))
 
 (defun eshell/piiq-restart-containers ()
