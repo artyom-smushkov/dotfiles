@@ -475,9 +475,13 @@ Stole from aweshell"
 
 (use-package gptel
   :config
-  (setq gptel-api-key OPENAI_KEY)
-  (setq gptel-default-mode 'org-mode)
-  (setq gptel-model "gpt-4o"))
+  (setq
+   gptel-model 'claude-3-5-sonnet-latest
+   gptel-backend (gptel-make-anthropic "Claude"
+                   :stream t :key ANTHROPIC_KEY))
+  ;; (setq gptel-api-key OPENAI_KEY)
+  (setq gptel-default-mode 'org-mode))
+  ;; (setq gptel-model "gpt-4o"))
 
 (defun efs/org-mode-setup ()
   (org-indent-mode)
