@@ -440,7 +440,6 @@ Stole from aweshell"
 	  (let ((frame (if use-old-frame (selected-frame) (make-frame))))
 		(progn
 		(select-frame-set-input-focus frame)
-		(cd "/podman:alpine:/var/home/templarrr")
 		(eshell)
 		(rename-buffer buffer-name))))))
 
