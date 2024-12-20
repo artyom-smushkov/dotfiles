@@ -440,6 +440,7 @@ Stole from aweshell"
 	  (let ((frame (if use-old-frame (selected-frame) (make-frame))))
 		(progn
 		(select-frame-set-input-focus frame)
+		(cd "/podman:alpine:/var/home/templarrr")
 		(eshell)
 		(rename-buffer buffer-name))))))
 
@@ -498,7 +499,7 @@ Stole from aweshell"
                   (org-level-6 . 1.1)
                   (org-level-7 . 1.1)
                   (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Fira Sans" :weight 'regular :height (cdr face)))
+    (set-face-attribute (car face) nil :font "Noto Sans" :weight 'regular :height (cdr face)))
 
   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
   (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
