@@ -5,3 +5,4 @@ end
 starship init fish | source
 set -g fish_greeting
 fish_config theme choose "Dracula"
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
