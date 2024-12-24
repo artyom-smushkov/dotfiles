@@ -128,8 +128,15 @@
     "ch" '(consult-history :which-key "history")
     "o" '(:ignore t :which-key "org")
     "oa" '(org-agenda :which-key "agenda")
+    "of" '(org-open-at-point :which-key "follow link")
+    "oi" '(org-id-get-create :which-key "create id")
+    "ob" '(org-mark-ring-goto :which-key "return back")
     "oc" '(org-capture :which-key "capture")
     "oq" '(org-ql-find-in-org-directory :which-key "query")
+    "on" '(:ignore t :which-key "org-node")
+    "onf" '(org-node-find :which-key "find node")
+    "oni" '(org-node-insert-link :which-key "insert link")
+    "one" '(org-node-extract-subtree :which-key "extract to new file")
     "u" '(universal-argument :which-key "universal argument")
     "w" 'evil-window-map
     "p" project-prefix-map
@@ -634,6 +641,14 @@ Stole from aweshell"
 (use-package org-ql
   :bind
   ("C-c q" . org-ql-find-in-org-directory))
+
+(use-package org-node
+  :after org
+  :config
+  (org-node-cache-mode)
+  (org-node-backlink-mode)
+  (setq org-node-ask-directory t)
+  (setq org-node-backlink-aggressive t))
 
 (use-package git-auto-commit-mode
   :init
