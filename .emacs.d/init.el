@@ -133,6 +133,7 @@
     "ob" '(org-mark-ring-goto :which-key "return back")
     "oc" '(org-capture :which-key "capture")
     "oq" '(org-ql-find-in-org-directory :which-key "query")
+    "ot" '(org-timestamp :which-key "insert date")
     "on" '(:ignore t :which-key "org-node")
     "onf" '(org-node-find :which-key "find node")
     "oni" '(org-node-insert-link :which-key "insert link")
@@ -172,6 +173,9 @@
 (use-package tramp
   :straight nil
   :config
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  (add-to-list 'tramp-remote-process-environment
+            (format "DISPLAY=%s" (getenv "DISPLAY")))
   (setq tramp-allow-unsafe-temporary-files t)
   (setq tramp-show-ad-hoc-proxies t)
   (setq tramp-save-ad-hoc-proxies nil))
@@ -297,6 +301,14 @@
     "C-j" 'evil-next-visual-line
     "C-k" 'evil-previous-visual-line))
 
+(use-package aider
+  :straight (:host github :repo "tninja/aider.el" :files ("aider.el"))
+  :config
+  (advice-add 'buffer-file-name :filter-return
+              (lambda (fname)
+              (when fname (file-local-name fname))))
+  (setq aider-args `("--model" "anthropic/claude-3-5-sonnet-20241022" "--anthropic-api-key" ,ANTHROPIC_KEY)))
+
 ;; Example configuration for Consult
 (use-package consult
   ;; Replace bindings. Lazily loaded due by `use-package'.
@@ -390,6 +402,7 @@
 (use-package eshell
   :ensure nil
   :hook ((eshell-mode . (lambda ()
+			  (setenv "PATH" (concat "/home/linuxbrew/.linuxbrew/bin:" (getenv "PATH")))
                           (setq-local corfu-count 7)
                           (setq-local corfu-auto nil)
                           (setq-local corfu-preview-current nil)
@@ -404,6 +417,7 @@
   (setq eshell-visual-commands nil)
   :init
   (add-to-list 'exec-path "/home/templarrr/.local/bin")
+  (add-to-list 'exec-path "/home/linuxbrew/.linuxbrew/bin")
   (defun eshell/cat-with-syntax-highlighting (filename)
     "Like cat(1) but with syntax highlighting.
 Stole from aweshell"
@@ -509,7 +523,7 @@ Stole from aweshell"
                   (org-level-6 . 1.1)
                   (org-level-7 . 1.1)
                   (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Noto Sans" :weight 'regular :height (cdr face)))
+    (set-face-attribute (car face) nil :font "Fira Sans" :weight 'regular :height (cdr face)))
 
   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
   (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
@@ -545,6 +559,9 @@ Stole from aweshell"
      (tags . " %i")
      (search . " %i")))
   (setq org-directory "~/Documents/Org")
+  (setq org-link-frame-setup
+    '((file . find-file)))
+
   (efs/org-font-setup)
   (require 'org-tempo)
   :bind
