@@ -26,6 +26,7 @@ return {
             vim.keymap.set("n", "<leader>pf", builtin.find_files, {})
             vim.keymap.set("n", "<leader>ps", builtin.live_grep, {})
             vim.keymap.set("n", "<leader>s", builtin.current_buffer_fuzzy_find, {})
+            vim.keymap.set("n", "<leader>o", builtin.lsp_document_symbols, {})
             vim.keymap.set("n", "<leader>b", builtin.buffers, {})
             require("telescope").load_extension("ui-select")
         end,

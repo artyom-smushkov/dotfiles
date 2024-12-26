@@ -17,3 +17,4 @@ vim.opt.nu = true
 vim.opt.relativenumber = true
 vim.opt.scrolloff = 15
 vim.opt.clipboard = 'unnamedplus'
+vim.opt.signcolumn = "yes"
