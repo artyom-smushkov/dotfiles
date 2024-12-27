@@ -174,6 +174,7 @@
   :straight nil
   :config
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  (setq remote-file-name-inhibit-locks t)
   (setq tramp-allow-unsafe-temporary-files t)
   (setq tramp-show-ad-hoc-proxies t)
   (setq tramp-save-ad-hoc-proxies nil))
@@ -302,7 +303,15 @@
 (use-package aider
   :straight (:host github :repo "tninja/aider.el" :files ("aider.el"))
   :config
-  (setq aider-args `("--model" "anthropic/claude-3-5-sonnet-20241022" "--anthropic-api-key" ,ANTHROPIC_KEY)))
+  (defun aider-add-or-read-current-file (command-prefix)
+    "Send the command \"COMMAND-PREFIX <current buffer file full path>\" to the corresponding aider comint buffer."
+    ;; Ensure the current buffer is associated with a file
+    (if (not buffer-file-name)
+      (message "Current buffer is not associated with a file.")
+      (let ((command (format "%s %s" (aider--get-add-command-prefix) (file-local-name (expand-file-name buffer-file-name)))))
+      ;; Use the shared helper function to send the command
+      (aider--send-command command))))
+  (setq aider-args `("--model" "anthropic/claude-3-5-sonnet-20241022" "--anthropic-api-key" ,ANTHROPIC_KEY "--no-auto-commits")))
 
 ;; Example configuration for Consult
 (use-package consult
