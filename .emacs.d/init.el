@@ -174,8 +174,6 @@
   :straight nil
   :config
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-  (add-to-list 'tramp-remote-process-environment
-            (format "DISPLAY=%s" (getenv "DISPLAY")))
   (setq tramp-allow-unsafe-temporary-files t)
   (setq tramp-show-ad-hoc-proxies t)
   (setq tramp-save-ad-hoc-proxies nil))
@@ -304,9 +302,6 @@
 (use-package aider
   :straight (:host github :repo "tninja/aider.el" :files ("aider.el"))
   :config
-  (advice-add 'buffer-file-name :filter-return
-              (lambda (fname)
-              (when fname (file-local-name fname))))
   (setq aider-args `("--model" "anthropic/claude-3-5-sonnet-20241022" "--anthropic-api-key" ,ANTHROPIC_KEY)))
 
 ;; Example configuration for Consult
